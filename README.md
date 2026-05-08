@@ -115,10 +115,3 @@ pytest
 
 All 32 tests run without a live database or API credentials. External services are mocked at the test boundary.
 
-## Team
-
-| Member | Responsibility |
-|---|---|
-| Adithya Subramaniam | Speech processing and multimodal language integration |
-| Harshit Kaushik | Computer vision and visual analysis |
-| Vijay Kumar Prakash | Product design, system integration, and project coordination |
