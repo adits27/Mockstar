@@ -107,11 +107,3 @@ uvicorn app.main:app --reload
 
 The API will be available at `http://localhost:8000`. Interactive documentation is at `http://localhost:8000/docs`.
 
-## Testing
-
-```bash
-pytest
-```
-
-All 32 tests run without a live database or API credentials. External services are mocked at the test boundary.
-
