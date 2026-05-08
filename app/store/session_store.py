@@ -1,0 +1,38 @@
+from typing import Any, Optional
+
+_store: dict[str, dict] = {}
+
+
+def clear() -> None:
+    _store.clear()
+
+
+def create(session_id: str, user_profile: dict, metadata: dict) -> None:
+    _store[session_id] = {"user_profile": user_profile, "metadata": metadata, "turns": []}
+
+
+def get(session_id: str) -> Optional[dict]:
+    return _store.get(session_id)
+
+
+def add_turn(session_id: str, turn: dict[str, Any]) -> None:
+    _store[session_id]["turns"].append(turn)
+
+
+def update_turn_metrics(
+    session_id: str,
+    turn_index: int,
+    filler_words: dict[str, int],
+    pause_count: int,
+    wpm: float,
+) -> None:
+    for turn in _store[session_id]["turns"]:
+        if turn["turn_index"] == turn_index:
+            turn["filler_words"] = filler_words
+            turn["pause_count"] = pause_count
+            turn["wpm"] = wpm
+            return
+
+
+def delete(session_id: str) -> None:
+    _store.pop(session_id, None)
