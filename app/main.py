@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from app.routers import sessions, turns
+from app.routers import sessions, turns, cv
 
 app = FastAPI(title="MockStar Speech API")
 app.include_router(sessions.router)
 app.include_router(turns.router)
+app.include_router(cv.router)

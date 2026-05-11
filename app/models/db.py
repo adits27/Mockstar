@@ -51,3 +51,17 @@ class DBFeedback(Base):
     )
     report = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class DBCVAnalysis(Base):
+    __tablename__ = "cv_analyses"
+
+    cv_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    session_id = Column(
+        UUID(as_uuid=True), ForeignKey("sessions.session_id"), nullable=False, unique=True
+    )
+    confidence_score = Column(Float, nullable=False)
+    confidence_label = Column(String, nullable=False)
+    metrics = Column(JSONB, nullable=False)
+    observations = Column(JSONB, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

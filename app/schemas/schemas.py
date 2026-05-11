@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 from pydantic import BaseModel
 
 
@@ -32,7 +32,7 @@ class TurnSummary(BaseModel):
     transcript: str
     filler_words: dict[str, int]
     pause_count: int
-    wpm: float | None
+    wpm: Optional[float]
 
 
 class SessionSummary(BaseModel):
@@ -40,7 +40,7 @@ class SessionSummary(BaseModel):
     job_role: str
     interview_type: str
     created_at: str
-    completed_at: str | None
+    completed_at: Optional[str]
 
 
 class SessionDetail(BaseModel):
@@ -49,8 +49,33 @@ class SessionDetail(BaseModel):
     interview_type: str
     user_profile: dict[str, Any]
     turns: list[TurnSummary]
-    feedback: str | None
+    feedback: Optional[str]
 
 
 class FeedbackResponse(BaseModel):
     feedback: str
+
+
+class GazeEvent(BaseModel):
+    timestamp: float
+    direction: str
+    duration: float
+
+
+class CVMetrics(BaseModel):
+    total_duration: float
+    face_detected_pct: float
+    gaze_on_camera_pct: float
+    gaze_away_events: int
+    avg_gaze_away_duration: float
+    max_gaze_away_duration: float
+    blink_count: int
+    gaze_timeline: list[GazeEvent]
+
+
+class CVAnalysisResult(BaseModel):
+    session_id: str
+    confidence_score: float
+    confidence_label: str
+    metrics: CVMetrics
+    observations: list[str]

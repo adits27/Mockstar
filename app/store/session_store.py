@@ -34,5 +34,10 @@ def update_turn_metrics(
             return
 
 
+def set_cv_result(session_id: str, result: dict) -> None:
+    if session_id in _store:
+        _store[session_id]["cv_result"] = result
+
+
 def delete(session_id: str) -> None:
     _store.pop(session_id, None)

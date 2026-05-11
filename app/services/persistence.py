@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.db import DBSession, DBTurn, DBFeedback
+from app.models.db import DBSession, DBTurn, DBFeedback, DBCVAnalysis
 
 
 async def persist_completed_session(
@@ -41,5 +41,16 @@ async def persist_completed_session(
 
     db_feedback = DBFeedback(session_id=sid, report=feedback_text)
     db.add(db_feedback)
+
+    cv_result = session_data.get("cv_result")
+    if cv_result:
+        db_cv = DBCVAnalysis(
+            session_id=sid,
+            confidence_score=cv_result["confidence_score"],
+            confidence_label=cv_result["confidence_label"],
+            metrics=cv_result["metrics"],
+            observations=cv_result["observations"],
+        )
+        db.add(db_cv)
 
     await db.commit()
