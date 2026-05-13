@@ -58,12 +58,16 @@ class ScoreBreakdown(BaseModel):
     industry_fit: int
     clarity_and_structure: int
     filler_word_usage: int
+    eye_contact_and_presence: Optional[int] = None
     overall: float
 
 
 class FeedbackResponse(BaseModel):
     feedback: str
     scores: ScoreBreakdown
+    confidence_score: Optional[float] = None
+    confidence_label: Optional[str] = None
+    observations: Optional[list[str]] = None
 
 
 class NextQuestionResponse(BaseModel):

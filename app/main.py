@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import sessions, turns, cv
+from app.routers import sessions, turns
 from app.store import session_store
 
 logger = logging.getLogger(__name__)
@@ -40,4 +40,3 @@ app.add_middleware(
 
 app.include_router(sessions.router)
 app.include_router(turns.router)
-app.include_router(cv.router)

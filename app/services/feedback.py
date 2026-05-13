@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 import google.generativeai as genai
 from google.generativeai import GenerationConfig
@@ -6,7 +7,7 @@ from google.generativeai import GenerationConfig
 from app.config import settings
 
 
-def build_feedback_prompt(session_data: dict) -> str:
+def build_feedback_prompt(session_data: dict, session_cv: Optional[dict] = None) -> str:
     profile = session_data["user_profile"]
     metadata = session_data["metadata"]
     turns = session_data["turns"]
@@ -23,6 +24,24 @@ def build_feedback_prompt(session_data: dict) -> str:
         for t in turns
     )
 
+    cv_section = ""
+    if session_cv:
+        cv_section = f"""
+Eye contact and presence (from video analysis):
+- Confidence score: {session_cv['confidence_score']}/100 ({session_cv['confidence_label']})
+- Observations: {'; '.join(session_cv['observations'])}
+
+Use this data to score eye_contact_and_presence below.
+"""
+
+    eye_contact_dimension = ""
+    if session_cv:
+        eye_contact_dimension = "\n- eye_contact_and_presence: How well did the candidate maintain camera focus and project confidence? Use the video analysis data above."
+
+    eye_contact_json = ""
+    if session_cv:
+        eye_contact_json = '\n    "eye_contact_and_presence": <int>,'
+
     return f"""You are an expert, inclusive interview coach evaluating a mock interview.
 
 User profile:
@@ -36,7 +55,7 @@ Do not factor speaking pace or speed into any score or feedback.
 Interview context:
 - Job role: {metadata.get("job_role", "not specified")}
 - Interview type: {metadata.get("interview_type", "general")}
-
+{cv_section}
 Interview turns:
 {turns_text}
 
@@ -51,7 +70,7 @@ Dimensions to score (integers 1-10):
 - experience_articulation: Were examples specific, credible, and well-described?
 - industry_fit: Did the candidate use appropriate terminology and demonstrate domain awareness?
 - clarity_and_structure: Was the answer well-organized and easy to follow?
-- filler_word_usage: How polished was delivery? (10 = no fillers, lower scores only for heavy, disruptive usage)
+- filler_word_usage: How polished was delivery? (10 = no fillers, lower scores only for heavy, disruptive usage){eye_contact_dimension}
 
 Return a JSON object with exactly this structure:
 {{
@@ -60,19 +79,19 @@ Return a JSON object with exactly this structure:
     "experience_articulation": <int>,
     "industry_fit": <int>,
     "clarity_and_structure": <int>,
-    "filler_word_usage": <int>,
+    "filler_word_usage": <int>,{eye_contact_json}
     "overall": <float, weighted average>
   }},
   "feedback": "<markdown feedback report covering: content quality and relevance, communication clarity, filler word patterns (framed constructively), strengths observed, specific areas for improvement with actionable suggestions>"
 }}"""
 
 
-async def generate_feedback(session_data: dict) -> dict:
+async def generate_feedback(session_data: dict, session_cv: Optional[dict] = None) -> dict:
     genai.configure(api_key=settings.google_api_key)
     model = genai.GenerativeModel(
         "gemini-2.5-flash",
         generation_config=GenerationConfig(response_mime_type="application/json"),
     )
-    prompt = build_feedback_prompt(session_data)
+    prompt = build_feedback_prompt(session_data, session_cv)
     response = await model.generate_content_async(prompt)
     return json.loads(response.text)

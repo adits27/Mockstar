@@ -70,8 +70,10 @@ def test_gaze_score_proportional():
 
 
 def test_zero_gaze_on_camera():
+    # 0% gaze loses 40pts but other dimensions are perfect (30+20+10=60) → Medium
     score, label, obs = score_session(_metrics(gaze_on_camera_pct=0.0))
-    assert label == "Low"
+    assert label == "Medium"
+    assert score == pytest.approx(60.0)
     assert any("low" in o.lower() or "frequent" in o.lower() for o in obs)
 
 

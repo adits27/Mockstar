@@ -41,6 +41,13 @@ def update_turn_metrics(
             return
 
 
+def update_turn_cv(session_id: str, turn_index: int, cv_data: dict) -> None:
+    for turn in _store[session_id]["turns"]:
+        if turn["turn_index"] == turn_index:
+            turn["cv_result"] = cv_data
+            return
+
+
 def set_cv_result(session_id: str, result: dict) -> None:
     if session_id in _store:
         _store[session_id]["cv_result"] = result
