@@ -14,6 +14,10 @@ class CreateSessionRequest(BaseModel):
     user_id: str
     job_role: str = "not specified"
     interview_type: str = "general"
+    company_name: str = ""
+    job_description: Optional[str] = None
+    resume_text: Optional[str] = None
+    num_questions: int = 5
     user_profile: dict[str, Any] = {}
 
 
@@ -41,6 +45,13 @@ class SessionSummary(BaseModel):
     interview_type: str
     created_at: str
     completed_at: Optional[str]
+    overall_score: Optional[float] = None
+
+
+class ResumeResponse(BaseModel):
+    resume_text: str
+    filename: Optional[str]
+    uploaded_at: str
 
 
 class SessionDetail(BaseModel):

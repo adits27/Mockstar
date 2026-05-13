@@ -16,6 +16,17 @@ def build_feedback_prompt(session_data: dict, session_cv: Optional[dict] = None)
     experience = profile.get("experience_level", "not specified")
     goals = profile.get("goals", "general improvement")
 
+    job_description = metadata.get("job_description") or ""
+    resume_text = metadata.get("resume_text") or ""
+    num_questions = metadata.get("num_questions", len(turns))
+
+    jd_section = f"\nJob description (for relevance assessment):\n{job_description[:3000]}\n" if job_description else ""
+    resume_section = (
+        f"\nCandidate resume:\n{resume_text[:2000]}\n"
+        "Where relevant, suggest specific experiences or stories from the candidate's resume "
+        "that would have strengthened their answers.\n"
+    ) if resume_text else ""
+
     turns_text = "\n\n".join(
         f"Q{t['turn_index'] + 1}: {t['question_text']}\n"
         f"Answer: {t['transcript']}\n"
@@ -55,7 +66,8 @@ Do not factor speaking pace or speed into any score or feedback.
 Interview context:
 - Job role: {metadata.get("job_role", "not specified")}
 - Interview type: {metadata.get("interview_type", "general")}
-{cv_section}
+- Number of questions: {num_questions}
+{jd_section}{resume_section}{cv_section}
 Interview turns:
 {turns_text}
 

@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --font-geist: "Geist", sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist);
+}
+
+body {
+  font-family: var(--font-sans);
+}

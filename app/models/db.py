@@ -54,6 +54,16 @@ class DBFeedback(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class DBUserResume(Base):
+    __tablename__ = "user_resumes"
+
+    resume_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(String, nullable=False, unique=True)
+    resume_text = Column(Text, nullable=False)
+    filename = Column(String)
+    uploaded_at = Column(DateTime, default=datetime.utcnow)
+
+
 class DBCVAnalysis(Base):
     __tablename__ = "cv_analyses"
 
