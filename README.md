@@ -1,109 +1,117 @@
 # MockStar
 
-AI-powered interview preparation platform with multimodal feedback. MockStar simulates realistic interview conversations and provides personalized coaching based on speech analysis and non-verbal communication cues.
+AI-powered interview preparation platform with multimodal feedback. MockStar simulates realistic interview conversations and provides personalised coaching based on speech analysis, computer vision, and your own resume.
 
 ## Overview
 
-MockStar conducts dynamic mock interviews using a conversational AI interviewer that follows up based on your responses. At the end of each session, you receive a structured feedback report covering content quality, communication patterns, and specific areas for improvement.
+MockStar conducts dynamic mock interviews using a conversational AI interviewer that adapts follow-up questions based on your responses and resume. At the end of each session, you receive a structured feedback report covering content quality, communication patterns, and specific resume-grounded story suggestions.
 
-The platform is designed to be accessible and inclusive. Users can self-report communication differences (stammer, lisp, accent, etc.) so the feedback engine can contextualize its analysis rather than penalize natural variation in speech.
+The platform is designed to be accessible and inclusive. Users can self-report communication differences (stammer, lisp, accent, etc.) so the feedback engine contextualises its analysis rather than penalise natural variation in speech.
 
 ## Architecture
 
-The system is composed of three independent modules:
+```
+frontend/          Next.js 16 web app (Google auth, interview UI, feedback dashboard)
+app/               FastAPI backend
+alembic/           Database migrations
+tests/             Backend test suite
+```
 
-- **Speech Processing** -- transcription via OpenAI Whisper, speech analytics (filler words, pauses, speaking rate), and feedback generation via Gemini 2.0 Flash
-- **Computer Vision** -- face detection, head pose estimation, and gaze analysis via OpenCV and MediaPipe (in development)
-- **Frontend** -- React web interface for video/audio capture, interview interaction, and feedback display (in development)
-
-This repository contains the speech processing backend.
+**Backend services:**
+- **Speech processing** — transcription via OpenAI Whisper, speech analytics (filler words, pauses, WPM)
+- **Computer vision** — gaze tracking and confidence scoring via OpenCV (runs per-turn as a background task)
+- **AI interviewer** — Gemini 2.5 Flash generates contextual follow-up questions tailored to role, JD, and resume
+- **Feedback generation** — Gemini 2.5 Flash produces structured scores and resume-aware feedback
 
 ## Tech Stack
 
 | Layer | Technology |
 |---|---|
+| Frontend | Next.js 16, TypeScript, Tailwind CSS |
+| Auth | Auth.js v5 (Google OAuth) |
 | API | FastAPI |
 | Speech-to-text | OpenAI Whisper API |
-| Feedback generation | Gemini 2.0 Flash |
+| AI (questions + feedback) | Gemini 2.5 Flash |
+| Computer vision | OpenCV (Haar cascades) |
 | Database | GCP Cloud SQL (PostgreSQL) |
 | Migrations | Alembic |
 | Testing | pytest, pytest-asyncio |
-
-## Project Structure
-
-```
-app/
-├── config.py              Environment-based configuration
-├── main.py                FastAPI application entry point
-├── database.py            Async SQLAlchemy engine and session factory
-├── models/db.py           ORM models (sessions, turns, feedback)
-├── schemas/schemas.py     Pydantic request and response models
-├── store/session_store.py In-memory store for active interview sessions
-├── services/
-│   ├── analytics.py       Filler word detection, pause counting, WPM
-│   ├── whisper.py         OpenAI Whisper transcription service
-│   ├── feedback.py        Gemini feedback generation with inclusive prompting
-│   └── persistence.py     Persists completed sessions to Cloud SQL
-└── routers/
-    ├── sessions.py        Session lifecycle endpoints
-    └── turns.py           Turn submission and interview end endpoints
-
-alembic/                   Database migrations
-tests/                     Full test suite (32 tests)
-```
 
 ## API Endpoints
 
 | Method | Path | Description |
 |---|---|---|
 | POST | `/sessions` | Create a new interview session |
-| GET | `/sessions?user_id=` | List past sessions for a user |
+| GET | `/sessions?user_id=` | List completed sessions for a user |
 | GET | `/sessions/{id}` | Get session detail with transcripts and feedback |
-| POST | `/sessions/{id}/turns` | Submit a recorded answer, returns transcript |
-| POST | `/sessions/{id}/end` | End the interview and generate feedback report |
-
-### Turn Flow
-
-Each `POST /turns` call accepts an audio file and returns a transcript immediately. Speech analytics (filler words, pauses, speaking rate) are computed in the background so they do not add latency to the conversation. At `POST /end`, all accumulated turn data is passed to Gemini 2.0 Flash to generate the feedback report, which is then persisted to Cloud SQL.
-
-Speaking rate (WPM) is stored for reference but is intentionally excluded from the feedback prompt to avoid penalizing users based on pace.
+| POST | `/sessions/{id}/turns` | Submit audio (+ optional video), returns transcript |
+| POST | `/sessions/{id}/next-question` | Generate next interview question |
+| POST | `/sessions/{id}/end` | End interview and generate feedback report |
+| POST | `/users/{user_id}/resume` | Upload and parse a resume (PDF or DOCX) |
+| GET | `/users/{user_id}/resume` | Fetch parsed resume text |
+| POST | `/users/{user_id}/extract-text` | Extract text from a PDF/DOCX (used for JD upload) |
 
 ## Setup
 
 ### Requirements
 
 - Python 3.9+
-- A GCP Cloud SQL (PostgreSQL) instance
+- Node.js 18+
+- A PostgreSQL instance (GCP Cloud SQL or local via Docker)
 - OpenAI API key
 - Google AI API key
+- Google OAuth credentials (for frontend auth)
 
-### Installation
+### Backend
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Environment Variables
-
-Copy `.env.example` to `.env` and fill in your credentials:
-
+Create a `.env` file in the project root:
 ```
 OPENAI_API_KEY=your_openai_key
 GOOGLE_API_KEY=your_google_key
 DATABASE_URL=postgresql+asyncpg://user:password@host:5432/mockstar
 ```
 
-### Database Setup
-
+Run migrations:
 ```bash
 alembic upgrade head
 ```
 
-### Running the Server
-
+Start the server:
 ```bash
 uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`. Interactive documentation is at `http://localhost:8000/docs`.
+API available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
+### Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+Create `frontend/.env.local`:
+```
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+AUTH_SECRET=<run: npx auth secret>
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+Start the dev server:
+```bash
+npm run dev
+```
+
+App available at `http://localhost:3000`.
+
+### Google OAuth setup
+
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials
+2. Create an OAuth client ID (Web application)
+3. Authorised JavaScript origins: `http://localhost:3000`
+4. Authorised redirect URIs: `http://localhost:3000/api/auth/callback/google`
