@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 _store: dict[str, dict] = {}
@@ -8,7 +9,12 @@ def clear() -> None:
 
 
 def create(session_id: str, user_profile: dict, metadata: dict) -> None:
-    _store[session_id] = {"user_profile": user_profile, "metadata": metadata, "turns": []}
+    _store[session_id] = {
+        "user_profile": user_profile,
+        "metadata": metadata,
+        "turns": [],
+        "last_activity": datetime.now(timezone.utc),
+    }
 
 
 def get(session_id: str) -> Optional[dict]:
@@ -17,6 +23,7 @@ def get(session_id: str) -> Optional[dict]:
 
 def add_turn(session_id: str, turn: dict[str, Any]) -> None:
     _store[session_id]["turns"].append(turn)
+    _store[session_id]["last_activity"] = datetime.now(timezone.utc)
 
 
 def update_turn_metrics(
@@ -36,3 +43,14 @@ def update_turn_metrics(
 
 def delete(session_id: str) -> None:
     _store.pop(session_id, None)
+
+
+def purge_expired(max_idle_seconds: int) -> list[str]:
+    now = datetime.now(timezone.utc)
+    expired = [
+        sid for sid, data in _store.items()
+        if (now - data["last_activity"]).total_seconds() > max_idle_seconds
+    ]
+    for sid in expired:
+        del _store[sid]
+    return expired

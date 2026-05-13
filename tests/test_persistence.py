@@ -85,7 +85,8 @@ async def test_persist_completed_session_writes_all_tables(db_session):
     }
     feedback_text = "Great communication overall."
 
-    await persist_completed_session(db_session, session_id, session_data, feedback_text)
+    scores = {"answer_relevance": 8, "experience_articulation": 7, "industry_fit": 7, "clarity_and_structure": 8, "filler_word_usage": 9, "overall": 7.8}
+    await persist_completed_session(db_session, session_id, session_data, feedback_text, scores)
 
     db_sess = await db_session.get(DBSession, uuid.UUID(session_id))
     assert db_sess is not None

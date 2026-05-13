@@ -50,4 +50,5 @@ class DBFeedback(Base):
         UUID(as_uuid=True), ForeignKey("sessions.session_id"), nullable=False, unique=True
     )
     report = Column(Text)
+    scores = Column(JSONB)
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -11,6 +11,7 @@ async def persist_completed_session(
     session_id: str,
     session_data: dict,
     feedback_text: str,
+    scores: dict,
 ) -> None:
     metadata = session_data["metadata"]
     sid = uuid.UUID(session_id)
@@ -24,6 +25,7 @@ async def persist_completed_session(
         completed_at=datetime.utcnow(),
     )
     db.add(db_session)
+    await db.flush()
 
     for turn in session_data.get("turns", []):
         filler_words = turn.get("filler_words", {})
@@ -39,7 +41,7 @@ async def persist_completed_session(
         )
         db.add(db_turn)
 
-    db_feedback = DBFeedback(session_id=sid, report=feedback_text)
+    db_feedback = DBFeedback(session_id=sid, report=feedback_text, scores=scores)
     db.add(db_feedback)
 
     await db.commit()

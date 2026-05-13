@@ -52,5 +52,19 @@ class SessionDetail(BaseModel):
     feedback: str | None
 
 
+class ScoreBreakdown(BaseModel):
+    answer_relevance: int
+    experience_articulation: int
+    industry_fit: int
+    clarity_and_structure: int
+    filler_word_usage: int
+    overall: float
+
+
 class FeedbackResponse(BaseModel):
     feedback: str
+    scores: ScoreBreakdown
+
+
+class NextQuestionResponse(BaseModel):
+    question: str

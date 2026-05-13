@@ -58,7 +58,7 @@ async def test_generate_feedback_returns_model_text():
     }
 
     mock_response = MagicMock()
-    mock_response.text = "Great job on clarity."
+    mock_response.text = '{"scores": {"answer_relevance": 8, "experience_articulation": 7, "industry_fit": 7, "clarity_and_structure": 8, "filler_word_usage": 9, "overall": 7.8}, "feedback": "Great job on clarity."}'
 
     with patch("app.services.feedback.genai") as mock_genai:
         mock_model = MagicMock()
@@ -67,4 +67,6 @@ async def test_generate_feedback_returns_model_text():
 
         result = await generate_feedback(session_data)
 
-    assert result == "Great job on clarity."
+    assert result["feedback"] == "Great job on clarity."
+    assert result["scores"]["answer_relevance"] == 8
+    assert result["scores"]["overall"] == 7.8

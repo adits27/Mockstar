@@ -17,7 +17,7 @@ async def test_post_turn_returns_transcript(client, session_id):
     with patch("app.routers.turns.transcribe", AsyncMock(return_value=mock_whisper)):
         resp = await client.post(
             f"/sessions/{session_id}/turns",
-            data={"question_text": "Tell me about yourself.", "turn_index": "0"},
+            data={"question_text": "Tell me about yourself."},
             files={"audio": ("audio.webm", b"fake-bytes", "audio/webm")},
         )
 
@@ -31,7 +31,7 @@ async def test_post_turn_returns_404_for_unknown_session(client):
     with patch("app.routers.turns.transcribe", AsyncMock(return_value={"text": "x", "words": [], "duration": 1.0})):
         resp = await client.post(
             "/sessions/nonexistent-id/turns",
-            data={"question_text": "Q?", "turn_index": "0"},
+            data={"question_text": "Q?"},
             files={"audio": ("audio.webm", b"bytes", "audio/webm")},
         )
     assert resp.status_code == 404
@@ -43,7 +43,7 @@ async def test_post_turn_stores_transcript_in_session_store(client, session_id):
     with patch("app.routers.turns.transcribe", AsyncMock(return_value=mock_whisper)):
         await client.post(
             f"/sessions/{session_id}/turns",
-            data={"question_text": "Background?", "turn_index": "0"},
+            data={"question_text": "Background?"},
             files={"audio": ("audio.webm", b"bytes", "audio/webm")},
         )
 
@@ -63,15 +63,17 @@ async def test_post_end_returns_feedback(client, session_id):
         "wpm": 140.0,
     })
 
-    mock_feedback = "Strong answers overall. Work on reducing filler words."
+    mock_scores = {"answer_relevance": 8, "experience_articulation": 7, "industry_fit": 7, "clarity_and_structure": 8, "filler_word_usage": 9, "overall": 7.8}
+    mock_result = {"feedback": "Strong answers overall. Work on reducing filler words.", "scores": mock_scores}
 
-    with patch("app.routers.turns.generate_feedback", AsyncMock(return_value=mock_feedback)), \
+    with patch("app.routers.turns.generate_feedback", AsyncMock(return_value=mock_result)), \
          patch("app.routers.turns.persist_completed_session", AsyncMock()), \
          patch("app.routers.turns.get_db"):
         resp = await client.post(f"/sessions/{session_id}/end")
 
     assert resp.status_code == 200
-    assert resp.json()["feedback"] == mock_feedback
+    assert resp.json()["feedback"] == mock_result["feedback"]
+    assert resp.json()["scores"]["answer_relevance"] == 8
 
 
 async def test_post_end_returns_404_for_unknown_session(client):
@@ -86,7 +88,9 @@ async def test_post_end_clears_session_from_memory(client, session_id):
         "transcript": "A.", "filler_words": {}, "pause_count": 0, "wpm": 100.0,
     })
 
-    with patch("app.routers.turns.generate_feedback", AsyncMock(return_value="Feedback.")), \
+    mock_result = {"feedback": "Feedback.", "scores": {"answer_relevance": 8, "experience_articulation": 7, "industry_fit": 7, "clarity_and_structure": 8, "filler_word_usage": 9, "overall": 7.8}}
+
+    with patch("app.routers.turns.generate_feedback", AsyncMock(return_value=mock_result)), \
          patch("app.routers.turns.persist_completed_session", AsyncMock()), \
          patch("app.routers.turns.get_db"):
         await client.post(f"/sessions/{session_id}/end")
