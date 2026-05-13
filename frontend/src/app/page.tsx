@@ -1,75 +1,310 @@
 "use client"
 
 import { signIn, useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/Button"
+import { Card } from "@/components/ui/Card"
+import { Footer } from "@/components/layout/Footer"
+
+const HOW_IT_WORKS = [
+  {
+    step: "1",
+    title: "Set up your interview",
+    body: "Choose your role, company, and format. Optionally upload your CV — MockStar shapes every question around the experience you actually need to practise.",
+  },
+  {
+    step: "2",
+    title: "Answer with audio & video",
+    body: "Respond to AI-generated questions out loud. Whisper transcribes your answers while the camera tracks your gaze and on-screen presence in real time.",
+  },
+  {
+    step: "3",
+    title: "Receive structured feedback",
+    body: "Get a scored report across six dimensions, actionable insights, and a question-by-question breakdown you can use before the real interview.",
+  },
+]
+
+const FEATURES = [
+  {
+    icon: "🤖",
+    title: "Tailored AI questions",
+    body: "Gemini 2.5 Flash generates contextual follow-up questions grounded in your resume and live answers — not a generic question bank.",
+  },
+  {
+    icon: "🎙️",
+    title: "Speech analytics",
+    body: "Whisper transcribes every answer and objectively tracks filler words, speaking pace, and unnatural pauses.",
+  },
+  {
+    icon: "👁️",
+    title: "Gaze & presence scoring",
+    body: "Computer vision monitors your eye contact and on-camera confidence across the entire session.",
+  },
+  {
+    icon: "📊",
+    title: "Six-dimension scoring",
+    body: "Every session is scored on relevance, articulation, industry fit, clarity, filler usage, and eye contact — so you know exactly where to improve.",
+  },
+]
+
+const FAQ = [
+  {
+    q: "What makes MockStar different from static interview question lists?",
+    a: "MockStar uses AI to generate follow-up questions in real time, tailored to your resume and what you actually said in your previous answer — not a predetermined list.",
+  },
+  {
+    q: "Which interview formats are supported?",
+    a: "Behavioural, technical, case study, and general. Questions adapt to your chosen format and target role throughout the session.",
+  },
+  {
+    q: "Is my session data stored?",
+    a: "Completed sessions are saved to your account so you can review feedback and track your progress over time. Nothing is shared with third parties.",
+  },
+]
 
 export default function Landing() {
   const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (session) router.replace("/dashboard")
-  }, [session, router])
+  const isSignedIn = !!session
 
   if (status === "loading") return null
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* Nav */}
+    <div className="min-h-screen flex flex-col">
+      {/* ── Header ─────────────────────────────────────────── */}
       <header className="max-w-6xl mx-auto w-full px-4 py-5 flex items-center justify-between">
-        <span className="font-semibold text-slate-900 text-lg tracking-tight">MockStar</span>
-        <Button variant="secondary" size="sm" onClick={() => signIn("google")}>
-          Sign in
-        </Button>
+        <Link href="/" className="shrink-0">
+          <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">
+            <Image
+              src="/mockstar_logo.png"
+              alt="MockStar"
+              fill
+              style={{ objectFit: "cover", objectPosition: "center 50%" }}
+              priority
+            />
+          </div>
+        </Link>
+        <nav className="flex items-center gap-1">
+          <Link
+            href="/about"
+            className="text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+          >
+            About
+          </Link>
+          <Link
+            href="/pricing"
+            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+          >
+            Pricing
+            <span className="text-[10px] font-medium bg-violet-100 text-violet-500 rounded-full px-1.5 py-0.5 leading-none">
+              Soon
+            </span>
+          </Link>
+          {isSignedIn ? (
+            <Link href="/dashboard">
+              <Button variant="primary" size="sm">
+                My Practice →
+              </Button>
+            </Link>
+          ) : (
+            <Button variant="secondary" size="sm" onClick={() => signIn("google")}>
+              Sign in
+            </Button>
+          )}
+        </nav>
       </header>
 
-      {/* Hero */}
-      <main className="flex-1 flex items-center justify-center px-4 py-20">
+      {/* ── Hero ───────────────────────────────────────────── */}
+      <section className="flex-1 flex items-center justify-center px-4 py-20">
         <div className="max-w-2xl mx-auto text-center">
-          <span className="inline-block px-3 py-1 text-xs font-medium bg-slate-100 text-slate-600 rounded-full mb-6">
+          <span className="inline-block px-3 py-1 text-xs font-medium bg-violet-100 text-violet-700 rounded-full mb-6">
             AI-powered interview coaching
           </span>
           <h1 className="text-5xl font-bold text-slate-900 leading-tight mb-6">
-            Practise interviews.
+            Mock Interviews That
             <br />
-            <span className="text-slate-400">Get better, faster.</span>
+            <span className="text-violet-500">Match Your Background</span>
           </h1>
-          <p className="text-lg text-slate-500 mb-10 leading-relaxed">
-            MockStar simulates real interviews, analyses your speech and body language, and delivers
-            personalised feedback grounded in your own resume and experience.
+          <p className="text-lg text-slate-600 mb-4 leading-relaxed">
+            MockStar turns your resume and target role into a tailored mock interview — with
+            AI-generated follow-up questions, speech and presence analysis, and structured feedback
+            you can act on.
           </p>
-          <Button size="lg" onClick={() => signIn("google")}>
-            Start with Google
-          </Button>
+          <p className="text-sm text-slate-400 mb-10">
+            Built for individual candidates. Extensible to career centres and training programmes.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {isSignedIn ? (
+              <Link href="/dashboard">
+                <Button size="lg">Go to My Practice →</Button>
+              </Link>
+            ) : (
+              <Button size="lg" onClick={() => signIn("google")}>
+                Start your first mock interview
+              </Button>
+            )}
+            <a
+              href="#how-it-works"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              See how it works ↓
+            </a>
+          </div>
         </div>
-      </main>
+      </section>
 
-      {/* Feature row */}
-      <section className="border-t border-slate-100 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-4 py-14 grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {[
-            {
-              title: "Resume-aware questions",
-              body: "Upload your CV and the AI tailors every question to your actual background.",
-            },
-            {
-              title: "Audio + video scoring",
-              body: "Filler words, pacing, and eye contact are all tracked and scored objectively.",
-            },
-            {
-              title: "Actionable feedback",
-              body: "Get specific story suggestions from your resume to strengthen your answers.",
-            },
-          ].map((f) => (
-            <div key={f.title}>
-              <h3 className="font-semibold text-slate-800 mb-2">{f.title}</h3>
+      {/* ── How It Works ───────────────────────────────────── */}
+      <section id="how-it-works" className="bg-white/40 backdrop-blur-sm border-y border-white/50">
+        <div className="max-w-5xl mx-auto px-4 py-16">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
+            How MockStar Works
+          </p>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">
+            Practice interviews that match your background and target role
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {HOW_IT_WORKS.map((item) => (
+              <Card key={item.step} className="flex gap-4 items-start">
+                <div className="shrink-0 w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center font-bold text-sm">
+                  {item.step}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-800 mb-1">{item.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{item.body}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Feature highlights ─────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-4 py-16 w-full">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
+          What's under the hood
+        </p>
+        <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">
+          Every tool you need to walk in confident
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {FEATURES.map((f) => (
+            <Card key={f.title}>
+              <div className="text-2xl mb-3">{f.icon}</div>
+              <h3 className="font-semibold text-slate-800 mb-1">{f.title}</h3>
               <p className="text-sm text-slate-500 leading-relaxed">{f.body}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </section>
+
+      {/* ── Sample output preview ──────────────────────────── */}
+      <section className="bg-white/40 backdrop-blur-sm border-y border-white/50">
+        <div className="max-w-5xl mx-auto px-4 py-16">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
+            Sample Output
+          </p>
+          <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">
+            See what a mock interview feedback report looks like
+          </h2>
+          <div className="max-w-xl mx-auto">
+            <Card className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+                    Overall Score
+                  </p>
+                  <div className="flex items-end gap-2">
+                    <span className="text-5xl font-bold text-emerald-600">8.2</span>
+                    <span className="text-xl text-slate-300 mb-1">/10</span>
+                  </div>
+                </div>
+                <span className="bg-emerald-100 text-emerald-700 text-sm font-medium px-3 py-1.5 rounded-full">
+                  Strong Performance
+                </span>
+              </div>
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full" style={{ width: "82%" }} />
+              </div>
+              <div className="border-t border-slate-100 pt-4">
+                <p className="text-xs text-slate-400 uppercase tracking-wider mb-2">
+                  Feedback Summary
+                </p>
+                <p className="text-sm text-slate-600 leading-relaxed italic">
+                  "Clear communication and relevant examples throughout. The biggest opportunity is
+                  adding sharper metrics and more explicit business impact to your strongest
+                  answers."
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                {[
+                  { label: "Relevance", score: 9 },
+                  { label: "Clarity", score: 8 },
+                  { label: "Industry Fit", score: 8 },
+                ].map((s) => (
+                  <div key={s.label} className="text-center bg-slate-50/80 rounded-xl p-3">
+                    <p className="text-lg font-bold text-slate-800">{s.score}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ────────────────────────────────────────────── */}
+      <section className="max-w-3xl mx-auto px-4 py-16 w-full">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider text-center mb-2">
+          FAQ
+        </p>
+        <h2 className="text-2xl font-bold text-slate-900 text-center mb-10">Common questions</h2>
+        <div className="space-y-3">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group bg-white/70 backdrop-blur-sm rounded-2xl border border-white/60 shadow-sm"
+            >
+              <summary className="flex items-center justify-between cursor-pointer list-none px-5 py-4">
+                <span className="text-sm font-medium text-slate-800">{item.q}</span>
+                <svg
+                  className="w-4 h-4 text-slate-400 shrink-0 ml-3 transition-transform group-open:rotate-180"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <p className="px-5 pb-4 text-sm text-slate-500 leading-relaxed">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Footer CTA ─────────────────────────────────────── */}
+      <section className="bg-white/40 backdrop-blur-sm border-t border-white/50">
+        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">
+            Practise before your next interview.
+          </h2>
+          <p className="text-slate-500 text-sm mb-8">
+            Rehearse your answers, handle follow-up questions, and review structured feedback — all
+            before the real thing.
+          </p>
+          {isSignedIn ? (
+            <Link href="/dashboard">
+              <Button size="lg">Go to My Practice →</Button>
+            </Link>
+          ) : (
+            <Button size="lg" onClick={() => signIn("google")}>
+              Start with Google
+            </Button>
+          )}
+        </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }

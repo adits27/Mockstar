@@ -60,9 +60,9 @@ export default function ActiveInterview() {
   const progress = `Question ${state.questionIndex + 1} of ${numQuestions}`
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Top bar */}
-      <header className="bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-white/50 px-4 py-3 flex items-center justify-between">
         <span className="font-semibold text-slate-900">MockStar</span>
         <span className="text-sm text-slate-400">{progress}</span>
       </header>
@@ -113,10 +113,20 @@ export default function ActiveInterview() {
             )}
 
             {state.phase === "recording" && (
-              <Button className="flex-1" variant="danger" onClick={handleStop}>
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                Stop recording
-              </Button>
+              <div className="flex-1 space-y-3">
+                <div className="flex items-end justify-center gap-1 h-9">
+                  <span className="w-1.5 rounded-full bg-violet-500 voice-bar-1" style={{ height: 6 }} />
+                  <span className="w-1.5 rounded-full bg-violet-400 voice-bar-2" style={{ height: 12 }} />
+                  <span className="w-1.5 rounded-full bg-violet-500 voice-bar-3" style={{ height: 20 }} />
+                  <span className="w-1.5 rounded-full bg-violet-400 voice-bar-4" style={{ height: 10 }} />
+                  <span className="w-1.5 rounded-full bg-violet-500 voice-bar-5" style={{ height: 16 }} />
+                  <span className="ml-2 text-xs text-slate-500 self-center">Listening…</span>
+                </div>
+                <Button className="w-full" variant="danger" onClick={handleStop}>
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  Stop recording
+                </Button>
+              </div>
             )}
 
             {state.phase === "processing" && (

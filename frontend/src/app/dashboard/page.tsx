@@ -42,7 +42,7 @@ export default function Dashboard() {
     <PageShell>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Your interviews</h1>
+          <h1 className="text-2xl font-bold text-slate-900">My Practice</h1>
           <p className="text-slate-500 text-sm mt-1">
             {sessions.length === 0 && !loading
               ? "No completed interviews yet."
