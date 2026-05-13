@@ -9,12 +9,12 @@ export function Navbar() {
   const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-white/50">
-      <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-200/60">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="shrink-0">
           <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">
             <Image
-              src="/mockstar_logo.png"
+              src="/logos/mockstar_logo.png"
               alt="MockStar"
               fill
               style={{ objectFit: "cover", objectPosition: "center 50%" }}
@@ -23,25 +23,25 @@ export function Navbar() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5">
           <Link
             href="/dashboard"
-            className="text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+            className="text-sm font-semibold text-slate-700 hover:text-violet-700 px-3.5 py-2 rounded-lg hover:bg-violet-50 transition-colors"
           >
             My Practice
           </Link>
           <Link
             href="/about"
-            className="text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+            className="text-sm font-semibold text-slate-700 hover:text-violet-700 px-3.5 py-2 rounded-lg hover:bg-violet-50 transition-colors"
           >
             About
           </Link>
           <Link
             href="/pricing"
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-violet-700 px-3.5 py-2 rounded-lg hover:bg-violet-50 transition-colors"
           >
             Pricing
-            <span className="text-[10px] font-medium bg-violet-100 text-violet-500 rounded-full px-1.5 py-0.5 leading-none">
+            <span className="text-[10px] font-semibold bg-violet-100 text-violet-600 rounded-full px-1.5 py-0.5 leading-none">
               Soon
             </span>
           </Link>
@@ -53,9 +53,9 @@ export function Navbar() {
               <Image
                 src={session.user.image}
                 alt={session.user.name ?? "User"}
-                width={32}
-                height={32}
-                className="rounded-full"
+                width={40}
+                height={40}
+                className="rounded-full ring-2 ring-violet-100"
               />
             )}
             <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: "/" })}>

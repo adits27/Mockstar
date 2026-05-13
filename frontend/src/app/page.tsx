@@ -76,7 +76,7 @@ export default function Landing() {
         <Link href="/" className="shrink-0">
           <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">
             <Image
-              src="/mockstar_logo.png"
+              src="/logos/mockstar_logo.png"
               alt="MockStar"
               fill
               style={{ objectFit: "cover", objectPosition: "center 50%" }}
@@ -84,22 +84,25 @@ export default function Landing() {
             />
           </div>
         </Link>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0.5">
           <Link
             href="/about"
-            className="text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+            className="text-sm font-semibold text-slate-700 hover:text-violet-700 px-3.5 py-2 rounded-lg hover:bg-violet-50 transition-colors"
           >
             About
           </Link>
           <Link
             href="/pricing"
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg hover:bg-white/60 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-700 hover:text-violet-700 px-3.5 py-2 rounded-lg hover:bg-violet-50 transition-colors"
           >
             Pricing
-            <span className="text-[10px] font-medium bg-violet-100 text-violet-500 rounded-full px-1.5 py-0.5 leading-none">
+            <span className="text-[10px] font-semibold bg-violet-100 text-violet-600 rounded-full px-1.5 py-0.5 leading-none">
               Soon
             </span>
           </Link>
+        </nav>
+
+        <div>
           {isSignedIn ? (
             <Link href="/dashboard">
               <Button variant="primary" size="sm">
@@ -111,7 +114,7 @@ export default function Landing() {
               Sign in
             </Button>
           )}
-        </nav>
+        </div>
       </header>
 
       {/* ── Hero ───────────────────────────────────────────── */}

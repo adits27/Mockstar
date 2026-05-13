@@ -6,15 +6,15 @@ import { PageShell } from "@/components/layout/PageShell"
 const TEAM = [
   {
     name: "Harshit Kaushik",
-    role: "ML & Speech Analytics",
+    role: "Computer Vision",
     initials: "HK",
     colour: "bg-violet-100 text-violet-700",
     linkedin: "https://www.linkedin.com/in/harshit-kaushik/",
-    github: "https://github.com/HARSHIT_GITHUB",
+    github: "https://github.com/Pingo9o11",
   },
   {
     name: "Adithya Subramaniam",
-    role: "Full-stack & Backend",
+    role: "Speech Processing",
     initials: "AS",
     colour: "bg-teal-100 text-teal-700",
     linkedin: "https://www.linkedin.com/in/adithya27/",
@@ -22,7 +22,7 @@ const TEAM = [
   },
   {
     name: "Vijay Kumar Prakash",
-    role: "Frontend & UX",
+    role: "Integrations, System Design & Product",
     initials: "VK",
     colour: "bg-pink-100 text-pink-700",
     linkedin: "https://www.linkedin.com/in/vijay-kumar-prakash/",

@@ -91,7 +91,7 @@ export default function NewInterview() {
                   value={jobRole}
                   onChange={(e) => setJobRole(e.target.value)}
                   placeholder="e.g. Senior Software Engineer"
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
                 />
               </label>
               <label className="block">
@@ -102,7 +102,7 @@ export default function NewInterview() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="e.g. Acme Corp"
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
                 />
               </label>
             </div>
@@ -121,7 +121,7 @@ export default function NewInterview() {
                       onClick={() => setInterviewType(t)}
                       className={`px-3 py-2 text-sm rounded-xl border transition-all ${
                         interviewType === t
-                          ? "border-slate-900 bg-slate-900 text-white"
+                          ? "border-violet-600 bg-violet-600 text-white"
                           : "border-slate-200 text-slate-600 hover:border-slate-400"
                       }`}
                     >
@@ -142,7 +142,7 @@ export default function NewInterview() {
                       onClick={() => setNumQuestions(n)}
                       className={`flex-1 py-2 text-sm rounded-xl border transition-all ${
                         numQuestions === n
-                          ? "border-slate-900 bg-slate-900 text-white"
+                          ? "border-violet-600 bg-violet-600 text-white"
                           : "border-slate-200 text-slate-600 hover:border-slate-400"
                       }`}
                     >
@@ -167,7 +167,7 @@ export default function NewInterview() {
                   onClick={() => setJdMode(m)}
                   className={`flex-1 py-2 text-sm rounded-xl border transition-all capitalize ${
                     jdMode === m
-                      ? "border-slate-900 bg-slate-900 text-white"
+                      ? "border-violet-600 bg-violet-600 text-white"
                       : "border-slate-200 text-slate-600 hover:border-slate-400"
                   }`}
                 >
@@ -181,13 +181,13 @@ export default function NewInterview() {
                 onChange={(e) => setJdText(e.target.value)}
                 rows={6}
                 placeholder="Paste the job description here…"
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 resize-none"
+                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
               />
             ) : (
               <label className="block cursor-pointer">
                 <div
                   className={`border-2 border-dashed rounded-2xl p-6 text-center transition-colors ${
-                    jdFile ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-400"
+                    jdFile ? "border-violet-500 bg-violet-50" : "border-slate-200 hover:border-violet-400"
                   }`}
                 >
                   <input
