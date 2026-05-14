@@ -9,7 +9,23 @@ import { Card } from "@/components/ui/Card"
 import { uploadResume } from "@/lib/api"
 
 const EXPERIENCE_LEVELS = ["Student / Internship", "Junior (0–2 yrs)", "Mid-level (3–5 yrs)", "Senior (6+ yrs)"]
-const CHALLENGES = ["Filler words", "Pacing", "Stammer", "Accent", "Eye contact", "Structuring answers"]
+const CHALLENGES = [
+  "Filler words",
+  "Pacing",
+  "Stutter / stammer",
+  "Accent",
+  "Eye contact",
+  "Structuring answers",
+  "ADHD",
+  "Anxiety",
+  "Autistic",
+  "Strabismus",
+  "Nystagmus",
+  "Tourette syndrome",
+  "Aphasia",
+  "Deaf / hard of hearing",
+  "Cluttering",
+]
 
 export default function Onboarding() {
   const { data: session } = useSession()
@@ -20,6 +36,9 @@ export default function Onboarding() {
   const [goals, setGoals] = useState("")
   const [selectedChallenges, setSelectedChallenges] = useState<string[]>([])
   const [file, setFile] = useState<File | null>(null)
+  const [linkedin, setLinkedin] = useState("")
+  const [github, setGithub] = useState("")
+  const [portfolio, setPortfolio] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -164,6 +183,36 @@ export default function Onboarding() {
                 )}
               </div>
             </label>
+
+            <div className="mb-6">
+              <span className="text-sm font-medium text-slate-700 mb-3 block">
+                Online profiles{" "}
+                <span className="text-slate-400 font-normal">(optional)</span>
+              </span>
+              <div className="space-y-3">
+                <input
+                  type="url"
+                  value={linkedin}
+                  onChange={(e) => setLinkedin(e.target.value)}
+                  placeholder="LinkedIn — https://linkedin.com/in/yourname"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                />
+                <input
+                  type="url"
+                  value={github}
+                  onChange={(e) => setGithub(e.target.value)}
+                  placeholder="GitHub — https://github.com/yourname"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                />
+                <input
+                  type="url"
+                  value={portfolio}
+                  onChange={(e) => setPortfolio(e.target.value)}
+                  placeholder="Portfolio / Blog — https://yoursite.com"
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                />
+              </div>
+            </div>
 
             {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
 

@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card"
 import { PageShell } from "@/components/layout/PageShell"
 import { createSession, extractDocumentText, getResume } from "@/lib/api"
 
-const INTERVIEW_TYPES = ["Behavioural", "Technical", "Case study", "General"]
+const INTERVIEW_TYPES = ["Behavioral", "Technical", "Case study", "General"]
 const QUESTION_COUNTS = [3, 5, 7]
 
 export default function NewInterview() {
@@ -17,9 +17,10 @@ export default function NewInterview() {
 
   const [companyName, setCompanyName] = useState("")
   const [jobRole, setJobRole] = useState("")
-  const [interviewType, setInterviewType] = useState("Behavioural")
+  const [interviewType, setInterviewType] = useState("Behavioral")
   const [numQuestions, setNumQuestions] = useState(5)
-  const [jdMode, setJdMode] = useState<"paste" | "upload">("paste")
+  const [jdMode, setJdMode] = useState<"paste" | "upload" | "url">("paste")
+  const [showUrlModal, setShowUrlModal] = useState(false)
   const [jdText, setJdText] = useState("")
   const [jdFile, setJdFile] = useState<File | null>(null)
   const [extracting, setExtracting] = useState(false)
@@ -160,22 +161,25 @@ export default function NewInterview() {
               Optional but recommended — helps tailor questions to the role.
             </p>
             <div className="flex gap-2 mb-4">
-              {(["paste", "upload"] as const).map((m) => (
+              {(["paste", "upload", "url"] as const).map((m) => (
                 <button
                   key={m}
                   type="button"
-                  onClick={() => setJdMode(m)}
-                  className={`flex-1 py-2 text-sm rounded-xl border transition-all capitalize ${
+                  onClick={() => {
+                    if (m === "url") { setShowUrlModal(true) }
+                    setJdMode(m)
+                  }}
+                  className={`flex-1 py-2 text-sm rounded-xl border transition-all ${
                     jdMode === m
                       ? "border-violet-600 bg-violet-600 text-white"
                       : "border-slate-200 text-slate-600 hover:border-slate-400"
                   }`}
                 >
-                  {m === "paste" ? "Paste text" : "Upload file"}
+                  {m === "paste" ? "Paste text" : m === "upload" ? "Upload file" : "URL"}
                 </button>
               ))}
             </div>
-            {jdMode === "paste" ? (
+            {jdMode === "paste" && (
               <textarea
                 value={jdText}
                 onChange={(e) => setJdText(e.target.value)}
@@ -183,7 +187,8 @@ export default function NewInterview() {
                 placeholder="Paste the job description here…"
                 className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
               />
-            ) : (
+            )}
+            {jdMode === "upload" && (
               <label className="block cursor-pointer">
                 <div
                   className={`border-2 border-dashed rounded-2xl p-6 text-center transition-colors ${
@@ -208,6 +213,32 @@ export default function NewInterview() {
                   )}
                 </div>
               </label>
+            )}
+            {jdMode === "url" && (
+              <input
+                type="url"
+                placeholder="https://example.com/job-posting"
+                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                readOnly
+              />
+            )}
+
+            {/* URL modal */}
+            {showUrlModal && (
+              <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+                <Card className="max-w-sm w-full">
+                  <h3 className="font-semibold text-slate-800 mb-2">Heads up</h3>
+                  <p className="text-sm text-slate-600 mb-5">
+                    Please paste the JD text or save as PDF and upload, because some websites block scraping.
+                  </p>
+                  <Button
+                    className="w-full"
+                    onClick={() => { setShowUrlModal(false); setJdMode("paste") }}
+                  >
+                    Got it
+                  </Button>
+                </Card>
+              </div>
             )}
           </Card>
 

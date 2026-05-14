@@ -8,7 +8,7 @@ const TEAM = [
     name: "Harshit Kaushik",
     role: "Computer Vision",
     initials: "HK",
-    colour: "bg-violet-100 text-violet-700",
+    color: "bg-violet-100 text-violet-700",
     linkedin: "https://www.linkedin.com/in/harshit-kaushik/",
     github: "https://github.com/Pingo9o11",
   },
@@ -16,7 +16,7 @@ const TEAM = [
     name: "Adithya Subramaniam",
     role: "Speech Processing",
     initials: "AS",
-    colour: "bg-teal-100 text-teal-700",
+    color: "bg-teal-100 text-teal-700",
     linkedin: "https://www.linkedin.com/in/adithya27/",
     github: "https://github.com/adits27",
   },
@@ -24,7 +24,7 @@ const TEAM = [
     name: "Vijay Kumar Prakash",
     role: "Integrations, System Design & Product",
     initials: "VK",
-    colour: "bg-pink-100 text-pink-700",
+    color: "bg-pink-100 text-pink-700",
     linkedin: "https://www.linkedin.com/in/vijay-kumar-prakash/",
     github: "https://github.com/VijayKumarPrakash",
   },
@@ -63,7 +63,7 @@ export default function AboutPage() {
             {TEAM.map((member) => (
               <Card key={member.name} className="text-center">
                 <div
-                  className={`w-14 h-14 rounded-full ${member.colour} flex items-center justify-center text-lg font-bold mx-auto mb-3`}
+                  className={`w-14 h-14 rounded-full ${member.color} flex items-center justify-center text-lg font-bold mx-auto mb-3`}
                 >
                   {member.initials}
                 </div>

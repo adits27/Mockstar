@@ -10,7 +10,7 @@ interface ScoreCardProps {
 export function ScoreCard({ label, score, maxScore = 10, description }: ScoreCardProps) {
   const pct = score / maxScore
 
-  const colour =
+  const color =
     pct >= 0.8
       ? { ring: "stroke-emerald-500", text: "text-emerald-600", bg: "bg-emerald-50" }
       : pct >= 0.6
@@ -34,11 +34,11 @@ export function ScoreCard({ label, score, maxScore = 10, description }: ScoreCar
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
-            className={clsx("transition-all duration-700", colour.ring)}
+            className={clsx("transition-all duration-700", color.ring)}
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className={clsx("text-xl font-bold", colour.text)}>{score}</span>
+          <span className={clsx("text-xl font-bold", color.text)}>{score}</span>
         </div>
       </div>
       <div className="text-center">

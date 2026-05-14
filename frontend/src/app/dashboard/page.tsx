@@ -10,7 +10,7 @@ import { PageShell } from "@/components/layout/PageShell"
 import { getResume, getSessions } from "@/lib/api"
 import type { SessionSummary } from "@/types"
 
-function scoreColour(score: number | null) {
+function scoreColor(score: number | null) {
   if (score === null) return "text-slate-400"
   if (score >= 8) return "text-emerald-600"
   if (score >= 6) return "text-amber-600"
@@ -66,7 +66,7 @@ export default function Dashboard() {
         <Card className="text-center py-16">
           <p className="text-slate-400 mb-6">Start your first practice interview to see results here.</p>
           <Link href="/interview/new">
-            <Button>Begin practising</Button>
+            <Button>Begin practicing</Button>
           </Link>
         </Card>
       )}
@@ -75,23 +75,28 @@ export default function Dashboard() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {sessions.map((s) => (
             <Link key={s.session_id} href={`/sessions/${s.session_id}/feedback`}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="min-w-0 pr-3">
                     <p className="font-semibold text-slate-800 leading-tight">{s.job_role}</p>
-                    <p className="text-xs text-slate-400 mt-0.5 capitalize">{s.interview_type}</p>
+                    <p className="text-sm text-slate-500 mt-0.5 truncate">{s.company_name || "—"}</p>
+                    <p className="text-xs text-slate-400 mt-1 capitalize">{s.interview_type}</p>
                   </div>
                   {s.overall_score !== null && (
-                    <span className={`text-2xl font-bold ${scoreColour(s.overall_score)}`}>
+                    <span className={`text-xl font-bold shrink-0 ${scoreColor(s.overall_score)}`}>
                       {s.overall_score.toFixed(1)}
+                      <span className="text-sm font-normal text-slate-400">/10</span>
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-400">
-                  {new Date(s.created_at).toLocaleDateString("en-GB", {
+                <p className="text-xs text-slate-400 mt-auto pt-3 border-t border-slate-100">
+                  {new Date(s.completed_at ?? s.created_at).toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
+                  })}{" · "}{new Date(s.completed_at ?? s.created_at).toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </p>
               </Card>

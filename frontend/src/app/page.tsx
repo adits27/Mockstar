@@ -1,6 +1,6 @@
 "use client"
 
-import { signIn, useSession } from "next-auth/react"
+import { signIn, signOut, useSession } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/Button"
@@ -11,7 +11,7 @@ const HOW_IT_WORKS = [
   {
     step: "1",
     title: "Set up your interview",
-    body: "Choose your role, company, and format. Optionally upload your CV — MockStar shapes every question around the experience you actually need to practise.",
+    body: "Choose your role, company, and format. Optionally upload your CV — MockStar shapes every question around the experience you actually need to practice.",
   },
   {
     step: "2",
@@ -27,22 +27,39 @@ const HOW_IT_WORKS = [
 
 const FEATURES = [
   {
-    icon: "🤖",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-violet-600">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+      </svg>
+    ),
     title: "Tailored AI questions",
     body: "Gemini 2.5 Flash generates contextual follow-up questions grounded in your resume and live answers — not a generic question bank.",
   },
   {
-    icon: "🎙️",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-violet-600">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+      </svg>
+    ),
     title: "Speech analytics",
     body: "Whisper transcribes every answer and objectively tracks filler words, speaking pace, and unnatural pauses.",
   },
   {
-    icon: "👁️",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-violet-600">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      </svg>
+    ),
     title: "Gaze & presence scoring",
     body: "Computer vision monitors your eye contact and on-camera confidence across the entire session.",
   },
   {
-    icon: "📊",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-violet-600">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+      </svg>
+    ),
     title: "Six-dimension scoring",
     body: "Every session is scored on relevance, articulation, industry fit, clarity, filler usage, and eye contact — so you know exactly where to improve.",
   },
@@ -55,7 +72,7 @@ const FAQ = [
   },
   {
     q: "Which interview formats are supported?",
-    a: "Behavioural, technical, case study, and general. Questions adapt to your chosen format and target role throughout the session.",
+    a: "Behavioral, technical, case study, and general. Questions adapt to your chosen format and target role throughout the session.",
   },
   {
     q: "Is my session data stored?",
@@ -102,13 +119,27 @@ export default function Landing() {
           </Link>
         </nav>
 
-        <div>
+        <div className="flex items-center gap-3">
           {isSignedIn ? (
-            <Link href="/dashboard">
-              <Button variant="primary" size="sm">
-                My Practice →
+            <>
+              <Link href="/dashboard">
+                <Button variant="primary" size="sm">
+                  My Practice →
+                </Button>
+              </Link>
+              {session?.user.image && (
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name ?? "User"}
+                  width={36}
+                  height={36}
+                  className="rounded-full ring-2 ring-violet-100"
+                />
+              )}
+              <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
+                Sign out
               </Button>
-            </Link>
+            </>
           ) : (
             <Button variant="secondary" size="sm" onClick={() => signIn("google")}>
               Sign in
@@ -134,7 +165,7 @@ export default function Landing() {
             you can act on.
           </p>
           <p className="text-sm text-slate-400 mb-10">
-            Built for individual candidates. Extensible to career centres and training programmes.
+            Built for individual candidates. Extensible to career centers and training programs.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             {isSignedIn ? (
@@ -192,7 +223,9 @@ export default function Landing() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {FEATURES.map((f) => (
             <Card key={f.title}>
-              <div className="text-2xl mb-3">{f.icon}</div>
+              <div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center mb-4">
+                {f.icon}
+              </div>
               <h3 className="font-semibold text-slate-800 mb-1">{f.title}</h3>
               <p className="text-sm text-slate-500 leading-relaxed">{f.body}</p>
             </Card>
@@ -289,7 +322,7 @@ export default function Landing() {
       <section className="bg-white/40 backdrop-blur-sm border-t border-white/50">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <h2 className="text-2xl font-bold text-slate-900 mb-3">
-            Practise before your next interview.
+            Practice before your next interview.
           </h2>
           <p className="text-slate-500 text-sm mb-8">
             Rehearse your answers, handle follow-up questions, and review structured feedback — all

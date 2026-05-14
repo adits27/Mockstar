@@ -61,23 +61,39 @@ export default function ActiveInterview() {
     await submitAnswer(result.audioBlob, result.videoBlob)
   }
 
-  const progress = `Question ${state.questionIndex + 1} of ${numQuestions}`
+  function handleQuit() {
+    if (window.confirm("Quit this interview? All progress and feedback for this session will be discarded.")) {
+      router.replace("/dashboard")
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-200/60">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">
-          <Image
-            src="/logos/mockstar_logo.png"
-            alt="MockStar"
-            fill
-            style={{ objectFit: "cover", objectPosition: "center 50%" }}
-            priority
-          />
-        </div>
-        <span className="text-sm text-slate-400">{progress}</span>
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-violet-50/95 via-white/90 to-purple-50/95 backdrop-blur-md shadow-sm border-b border-violet-100/60">
+        <div className="max-w-6xl mx-auto px-4 h-16 grid grid-cols-3 items-center">
+          <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">
+            <Image
+              src="/logos/mockstar_logo.png"
+              alt="MockStar"
+              fill
+              style={{ objectFit: "cover", objectPosition: "center 50%" }}
+              priority
+            />
+          </div>
+          <div className="flex justify-center">
+            <span className="bg-violet-100 text-violet-700 text-sm font-semibold px-3.5 py-1.5 rounded-full">
+              Question {state.questionIndex + 1} of {numQuestions}
+            </span>
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={handleQuit}
+              className="text-sm text-red-400 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Quit interview
+            </button>
+          </div>
         </div>
       </header>
 

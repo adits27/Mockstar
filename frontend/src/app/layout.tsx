@@ -7,7 +7,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" })
 
 export const metadata: Metadata = {
   title: "MockStar — AI Interview Practice",
-  description: "Practise interviews with AI-powered audio and video feedback.",
+  description: "Practice interviews with AI-powered audio and video feedback.",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

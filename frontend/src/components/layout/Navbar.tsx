@@ -9,7 +9,7 @@ export function Navbar() {
   const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-200/60">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-violet-50/95 via-white/90 to-purple-50/95 backdrop-blur-md shadow-sm border-b border-violet-100/60">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="shrink-0">
           <div className="w-[118px] h-[30px] relative overflow-hidden rounded-md">

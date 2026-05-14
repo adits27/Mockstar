@@ -8,7 +8,7 @@ const PLANNED_TIERS = [
     name: "Free",
     description: "Perfect for getting started with AI interview practice.",
     highlights: ["5 mock interviews per month", "Speech analytics & transcription", "Structured feedback report"],
-    colour: "border-slate-200",
+    color: "border-slate-200",
     badge: null,
   },
   {
@@ -21,12 +21,12 @@ const PLANNED_TIERS = [
       "Resume upload & tailored questions",
       "Progress tracking over time",
     ],
-    colour: "border-violet-400",
+    color: "border-violet-400",
     badge: "Most Popular",
   },
   {
     name: "Teams",
-    description: "For career centres, universities, and employer training programmes.",
+    description: "For career centers, universities, and employer training programs.",
     highlights: [
       "Everything in Pro",
       "Cohort management dashboard",
@@ -34,7 +34,7 @@ const PLANNED_TIERS = [
       "Custom interview templates",
       "Dedicated support",
     ],
-    colour: "border-teal-400",
+    color: "border-teal-400",
     badge: null,
   },
 ]
@@ -60,7 +60,7 @@ export default function PricingPage() {
           {PLANNED_TIERS.map((tier) => (
             <Card
               key={tier.name}
-              className={`relative border-2 ${tier.colour} flex flex-col`}
+              className={`relative border-2 ${tier.color} flex flex-col`}
             >
               {tier.badge && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-semibold bg-violet-600 text-white rounded-full px-3 py-1">
@@ -92,7 +92,7 @@ export default function PricingPage() {
             In the meantime, MockStar is completely free — no account limits.
           </p>
           <Link href="/interview/new">
-            <Button size="lg">Start practising for free</Button>
+            <Button size="lg">Start practicing for free</Button>
           </Link>
         </div>
       </div>

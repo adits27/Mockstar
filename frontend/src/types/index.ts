@@ -31,6 +31,7 @@ export interface CreateSessionRequest {
 export interface SessionSummary {
   session_id: string
   job_role: string
+  company_name?: string | null
   interview_type: string
   created_at: string
   completed_at: string | null
