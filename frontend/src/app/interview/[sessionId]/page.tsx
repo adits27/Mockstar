@@ -27,9 +27,12 @@ export default function ActiveInterview() {
   } = useMediaRecorder()
 
   const videoRef = useRef<HTMLVideoElement>(null)
+  const questionLoadedRef = useRef(false)
 
-  // Load first question on mount
+  // Load first question on mount (ref guard prevents StrictMode double-fire)
   useEffect(() => {
+    if (questionLoadedRef.current) return
+    questionLoadedRef.current = true
     loadNextQuestion()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

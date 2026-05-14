@@ -1,10 +1,14 @@
 import json
+import logging
+import re
 from typing import Optional
 
 import google.generativeai as genai
 from google.generativeai import GenerationConfig
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def build_feedback_prompt(session_data: dict, session_cv: Optional[dict] = None) -> str:
@@ -98,6 +102,23 @@ Return a JSON object with exactly this structure:
 }}"""
 
 
+def _extract_json(text: str) -> dict:
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # Gemini sometimes wraps JSON in markdown fences
+    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    if match:
+        return json.loads(match.group(1))
+    # Last resort: find outermost braces
+    start = text.find("{")
+    end = text.rfind("}") + 1
+    if start != -1 and end > start:
+        return json.loads(text[start:end])
+    raise ValueError(f"No valid JSON found in response: {text[:200]}")
+
+
 async def generate_feedback(session_data: dict, session_cv: Optional[dict] = None) -> dict:
     genai.configure(api_key=settings.google_api_key)
     model = genai.GenerativeModel(
@@ -105,5 +126,12 @@ async def generate_feedback(session_data: dict, session_cv: Optional[dict] = Non
         generation_config=GenerationConfig(response_mime_type="application/json"),
     )
     prompt = build_feedback_prompt(session_data, session_cv)
-    response = await model.generate_content_async(prompt)
-    return json.loads(response.text)
+    last_err: Exception = RuntimeError("No attempts made")
+    for attempt in range(3):
+        response = await model.generate_content_async(prompt)
+        try:
+            return _extract_json(response.text)
+        except (json.JSONDecodeError, ValueError) as exc:
+            logger.warning("Gemini returned invalid JSON (attempt %d/3): %s", attempt + 1, exc)
+            last_err = exc
+    raise RuntimeError(f"Gemini returned invalid JSON after 3 attempts: {last_err}") from last_err
