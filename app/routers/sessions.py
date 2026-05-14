@@ -61,7 +61,7 @@ async def get_session(session_id: str, db: AsyncSession = Depends(get_db)):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Session not found")
 
-    from app.models.db import DBTurn
+    from app.models.db import DBTurn, DBCVAnalysis
 
     turns_result = await db.execute(
         select(DBTurn).where(DBTurn.session_id == uuid.UUID(session_id)).order_by(DBTurn.turn_index)
@@ -72,6 +72,11 @@ async def get_session(session_id: str, db: AsyncSession = Depends(get_db)):
         select(DBFeedback).where(DBFeedback.session_id == uuid.UUID(session_id))
     )
     feedback = feedback_result.scalar_one_or_none()
+
+    cv_result = await db.execute(
+        select(DBCVAnalysis).where(DBCVAnalysis.session_id == uuid.UUID(session_id))
+    )
+    cv = cv_result.scalar_one_or_none()
 
     return {
         "session_id": session_id,
@@ -90,4 +95,8 @@ async def get_session(session_id: str, db: AsyncSession = Depends(get_db)):
             for t in turns
         ],
         "feedback": feedback.report if feedback else None,
+        "scores": feedback.scores if feedback else None,
+        "confidence_score": cv.confidence_score if cv else None,
+        "confidence_label": cv.confidence_label if cv else None,
+        "observations": cv.observations if cv else None,
     }

@@ -13,7 +13,7 @@ const CHALLENGES = [
   "Filler words",
   "Pacing",
   "Stutter / stammer",
-  "Accent",
+  "Non-native English speaker",
   "Eye contact",
   "Structuring answers",
   "ADHD",

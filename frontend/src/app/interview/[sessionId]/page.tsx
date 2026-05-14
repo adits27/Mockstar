@@ -102,9 +102,17 @@ export default function ActiveInterview() {
         <div className="space-y-4">
           <Card>
             {state.phase === "loading" ? (
-              <div className="space-y-2 animate-pulse">
-                <div className="h-4 bg-slate-100 rounded w-3/4" />
-                <div className="h-4 bg-slate-100 rounded w-1/2" />
+              <div className="flex flex-col items-center py-4 text-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-2 h-2 rounded-full bg-violet-400 animate-bounce" />
+                </div>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {state.questionIndex === 0
+                    ? "Preparing your first question…"
+                    : "Take a deep breath — your next question is on its way."}
+                </p>
               </div>
             ) : (
               <>
