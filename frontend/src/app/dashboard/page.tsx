@@ -22,6 +22,18 @@ export default function Dashboard() {
   const router = useRouter()
   const [sessions, setSessions] = useState<SessionSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const [showConsent, setShowConsent] = useState(false)
+
+  useEffect(() => {
+    if (localStorage.getItem("mockstar-data-consent") === null) {
+      setShowConsent(true)
+    }
+  }, [])
+
+  function handleConsent(agreed: boolean) {
+    localStorage.setItem("mockstar-data-consent", agreed ? "granted" : "declined")
+    setShowConsent(false)
+  }
 
   useEffect(() => {
     if (!session?.user.id) return
@@ -102,6 +114,36 @@ export default function Dashboard() {
               </Card>
             </Link>
           ))}
+        </div>
+      )}
+      {/* ── Data consent modal ─────────────────────────────── */}
+      {showConsent && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <Card className="max-w-md w-full">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              A quick note
+            </p>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">
+              Help us improve MockStar
+            </h2>
+            <p className="text-sm text-slate-600 leading-relaxed mb-2">
+              We&apos;d like to use your interview sessions — including transcripts, audio recordings,
+              and performance data — to help train and improve our AI models.
+            </p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-6">
+              Your data would only ever be used to make MockStar better. Saying no won&apos;t
+              affect your experience in any way, and you can update your preference at any time
+              from your account settings.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button className="flex-1" onClick={() => handleConsent(true)}>
+                Yes, I&apos;m happy to help
+              </Button>
+              <Button className="flex-1" variant="secondary" onClick={() => handleConsent(false)}>
+                No thanks
+              </Button>
+            </div>
+          </Card>
         </div>
       )}
     </PageShell>
