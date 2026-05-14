@@ -11,10 +11,8 @@ def session_id():
     return sid
 
 
-async def test_post_turn_returns_transcript(client, session_id):
-    mock_whisper = {"text": "I worked at Google.", "words": [], "duration": 3.0}
-
-    with patch("app.routers.turns.transcribe", AsyncMock(return_value=mock_whisper)):
+async def test_post_turn_returns_empty_transcript_immediately(client, session_id):
+    with patch("app.routers.turns._run_transcription_and_analytics", AsyncMock()):
         resp = await client.post(
             f"/sessions/{session_id}/turns",
             data={"question_text": "Tell me about yourself."},
@@ -23,24 +21,21 @@ async def test_post_turn_returns_transcript(client, session_id):
 
     assert resp.status_code == 200
     data = resp.json()
-    assert data["transcript"] == "I worked at Google."
+    assert data["transcript"] == ""
     assert "turn_id" in data
 
 
 async def test_post_turn_returns_404_for_unknown_session(client):
-    with patch("app.routers.turns.transcribe", AsyncMock(return_value={"text": "x", "words": [], "duration": 1.0})):
-        resp = await client.post(
-            "/sessions/nonexistent-id/turns",
-            data={"question_text": "Q?"},
-            files={"audio": ("audio.webm", b"bytes", "audio/webm")},
-        )
+    resp = await client.post(
+        "/sessions/nonexistent-id/turns",
+        data={"question_text": "Q?"},
+        files={"audio": ("audio.webm", b"bytes", "audio/webm")},
+    )
     assert resp.status_code == 404
 
 
-async def test_post_turn_stores_transcript_in_session_store(client, session_id):
-    mock_whisper = {"text": "My background is in ML.", "words": [], "duration": 4.0}
-
-    with patch("app.routers.turns.transcribe", AsyncMock(return_value=mock_whisper)):
+async def test_post_turn_stores_turn_with_pending_transcript(client, session_id):
+    with patch("app.routers.turns._run_transcription_and_analytics", AsyncMock()):
         await client.post(
             f"/sessions/{session_id}/turns",
             data={"question_text": "Background?"},
@@ -49,7 +44,8 @@ async def test_post_turn_stores_transcript_in_session_store(client, session_id):
 
     session = session_store.get(session_id)
     assert len(session["turns"]) == 1
-    assert session["turns"][0]["transcript"] == "My background is in ML."
+    # transcript starts as None; background task fills it in asynchronously
+    assert session["turns"][0]["transcript"] is None
 
 
 async def test_post_end_returns_feedback(client, session_id):

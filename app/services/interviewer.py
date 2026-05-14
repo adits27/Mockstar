@@ -24,6 +24,7 @@ Generate a single opening interview question tailored to this candidate and role
     history = "\n\n".join(
         f"Q: {t['question_text']}\nA: {t['transcript']}"
         for t in turns
+        if t.get("transcript")
     )
 
     return f"""You are conducting a {interview_type} interview for a {job_role} position{company_line}.

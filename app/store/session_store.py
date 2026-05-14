@@ -14,6 +14,7 @@ def create(session_id: str, user_profile: dict, metadata: dict) -> None:
         "metadata": metadata,
         "turns": [],
         "last_activity": datetime.now(timezone.utc),
+        "pending_transcriptions": 0,
     }
 
 
@@ -24,6 +25,30 @@ def get(session_id: str) -> Optional[dict]:
 def add_turn(session_id: str, turn: dict[str, Any]) -> None:
     _store[session_id]["turns"].append(turn)
     _store[session_id]["last_activity"] = datetime.now(timezone.utc)
+
+
+def increment_pending(session_id: str) -> None:
+    if session_id in _store:
+        _store[session_id]["pending_transcriptions"] += 1
+
+
+def decrement_pending(session_id: str) -> None:
+    if session_id in _store:
+        _store[session_id]["pending_transcriptions"] = max(
+            0, _store[session_id]["pending_transcriptions"] - 1
+        )
+
+
+def pending_count(session_id: str) -> int:
+    session = _store.get(session_id)
+    return session["pending_transcriptions"] if session else 0
+
+
+def update_turn_transcript(session_id: str, turn_index: int, transcript: str) -> None:
+    for turn in _store[session_id]["turns"]:
+        if turn["turn_index"] == turn_index:
+            turn["transcript"] = transcript
+            return
 
 
 def update_turn_metrics(

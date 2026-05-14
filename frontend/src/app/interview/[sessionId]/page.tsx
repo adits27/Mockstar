@@ -100,15 +100,6 @@ export default function ActiveInterview() {
             )}
           </Card>
 
-          {state.transcript && (
-            <Card>
-              <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">
-                Your answer
-              </p>
-              <p className="text-sm text-slate-700 leading-relaxed">{state.transcript}</p>
-            </Card>
-          )}
-
           {state.error && (
             <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-3">{state.error}</p>
           )}
@@ -145,7 +136,7 @@ export default function ActiveInterview() {
 
             {state.phase === "processing" && (
               <Button className="flex-1" loading disabled>
-                Transcribing…
+                Saving answer…
               </Button>
             )}
 

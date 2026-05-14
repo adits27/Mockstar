@@ -17,7 +17,6 @@ interface InterviewState {
   phase: Phase
   question: string
   questionIndex: number
-  transcript: string
   feedback: FeedbackResponse | null
   error: string | null
 }
@@ -27,7 +26,6 @@ export function useInterview(sessionId: string, numQuestions: number) {
     phase: "loading",
     question: "",
     questionIndex: 0,
-    transcript: "",
     feedback: null,
     error: null,
   })
@@ -52,26 +50,22 @@ export function useInterview(sessionId: string, numQuestions: number) {
     async (audioBlob: Blob, videoBlob: Blob | null) => {
       setState((s) => ({ ...s, phase: "processing" }))
       try {
-        const { transcript } = await api.postTurn(
-          sessionId,
-          state.question,
-          audioBlob,
-          videoBlob,
-        )
-        setState((s) => ({ ...s, phase: "answered", transcript }))
+        await api.postTurn(sessionId, state.question, audioBlob, videoBlob)
+        if (isLast) {
+          setState((s) => ({ ...s, phase: "answered" }))
+        } else {
+          setState((s) => ({ ...s, questionIndex: s.questionIndex + 1 }))
+          await loadNextQuestion()
+        }
       } catch (e) {
         setState((s) => ({ ...s, error: (e as Error).message, phase: "answered" }))
       }
     },
-    [sessionId, state.question],
+    [sessionId, state.question, isLast, loadNextQuestion],
   )
 
   const nextQuestion = useCallback(async () => {
-    setState((s) => ({
-      ...s,
-      questionIndex: s.questionIndex + 1,
-      transcript: "",
-    }))
+    setState((s) => ({ ...s, questionIndex: s.questionIndex + 1 }))
     await loadNextQuestion()
   }, [loadNextQuestion])
 
