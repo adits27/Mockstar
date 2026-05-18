@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MockStar — System Architecture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet-700: #6d28d9;
+      --violet-600: #7c3aed;
+      --violet-500: #8b5cf6;
+      --violet-400: #a78bfa;
+      --violet-200: #ddd6fe;
+      --violet-100: #ede9fe;
+      --violet-50:  #f5f3ff;
+      --slate-900:  #0f172a;
+      --slate-800:  #1e293b;
+      --slate-700:  #334155;
+      --slate-500:  #64748b;
+      --slate-400:  #94a3b8;
+      --slate-300:  #cbd5e1;
+      --slate-200:  #e2e8f0;
+      --slate-100:  #f1f5f9;
+      --slate-50:   #f8fafc;
+      --emerald-500: #10b981;
+      --sky-500:     #0ea5e9;
+      --amber-500:   #f59e0b;
+      --rose-500:    #f43f5e;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--violet-500) 100%);
+      color: white;
+      padding: 2.5rem 3rem;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; opacity: 0.85; font-size: 1rem; max-width: 560px; }
+
+    /* ── Main ───────────────────────────────────────── */
+    main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+    /* ── Section labels ─────────────────────────────── */
+    .layer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--slate-400);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .layer-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--slate-200);
+    }
+
+    /* ── Layers ─────────────────────────────────────── */
+    .layer {
+      margin-bottom: 1rem;
+    }
+
+    .cards {
+      display: grid;
+      gap: 1rem;
+    }
+    .cards.cols-1 { grid-template-columns: 1fr; }
+    .cards.cols-2 { grid-template-columns: 1fr 1fr; }
+    .cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      position: relative;
+    }
+
+    .card.violet {
+      border-color: var(--violet-200);
+      background: var(--violet-50);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+    .icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .icon.violet  { background: var(--violet-100); }
+    .icon.emerald { background: #d1fae5; }
+    .icon.sky     { background: #e0f2fe; }
+    .icon.amber   { background: #fef3c7; }
+    .icon.slate   { background: var(--slate-100); }
+    .icon.rose    { background: #ffe4e6; }
+
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+    .card p {
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      line-height: 1.5;
+    }
+    .card .tech {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+    .badge.violet  { background: var(--violet-100); color: var(--violet-700); }
+    .badge.emerald { background: #d1fae5; color: #065f46; }
+    .badge.sky     { background: #e0f2fe; color: #0369a1; }
+    .badge.amber   { background: #fef3c7; color: #92400e; }
+    .badge.slate   { background: var(--slate-100); color: var(--slate-700); }
+    .badge.rose    { background: #ffe4e6; color: #9f1239; }
+
+    /* ── Arrow connector ────────────────────────────── */
+    .connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0;
+      gap: 0.5rem;
+      color: var(--slate-400);
+      font-size: 0.75rem;
+    }
+    .connector .line {
+      flex: 1;
+      max-width: 200px;
+      height: 1px;
+      background: var(--slate-200);
+      position: relative;
+    }
+    .connector .label {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.7rem;
+      color: var(--slate-500);
+      white-space: nowrap;
+    }
+    .arrow-down {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem 0;
+      color: var(--slate-300);
+      font-size: 1.4rem;
+    }
+
+    /* ── Data flows legend ──────────────────────────── */
+    .legend {
+      margin-top: 3rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+    .legend h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--slate-700);
+    }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.82rem;
+      color: var(--slate-600);
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ─────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--slate-400);
+      border-top: 1px solid var(--slate-200);
+    }
+
+    @media (max-width: 700px) {
+      .cards.cols-2, .cards.cols-3, .cards.cols-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">System Architecture</div>
+  <h1>MockStar</h1>
+  <p>AI-powered mock interview platform — full-stack architecture across browser, backend, external AI services, and persistent storage.</p>
+</header>
+
+<main>
+
+  <!-- ── Layer 1: Client ── -->
+  <div class="layer">
+    <div class="layer-label">Client</div>
+    <div class="cards cols-1">
+      <div class="card violet">
+        <div class="card-header">
+          <div class="icon violet">🖥️</div>
+          <h3>Browser (Next.js 16 / React 19)</h3>
+        </div>
+        <p>Single-page application served from Vercel. Handles Google OAuth via NextAuth v5, captures audio and video using the MediaRecorder API, drives the interview state machine, and renders Gemini's markdown feedback.</p>
+        <div class="tech">
+          <span class="badge violet">Next.js 16</span>
+          <span class="badge violet">React 19</span>
+          <span class="badge violet">NextAuth v5</span>
+          <span class="badge violet">Tailwind CSS v4</span>
+          <span class="badge violet">MediaRecorder API</span>
+          <span class="badge slate">TypeScript</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓ <span style="font-size:0.72rem;color:var(--slate-400);margin-left:0.5rem">HTTPS · multipart/form-data (audio + video) · JSON</span></div>
+
+  <!-- ── Layer 2: API ── -->
+  <div class="layer">
+    <div class="layer-label">API Layer</div>
+    <div class="cards cols-3">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon sky">⚡</div>
+          <h3>Sessions Router</h3>
+        </div>
+        <p>Create, list, and retrieve completed sessions. Owns the session lifecycle from creation to persistence.</p>
+        <div class="tech">
+          <span class="badge sky">POST /sessions</span>
+          <span class="badge sky">GET /sessions</span>
+          <span class="badge sky">GET /sessions/{id}</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon sky">🎙️</div>
+          <h3>Turns Router</h3>
+        </div>
+        <p>Accepts audio/video uploads, fires background transcription and CV tasks, drives question generation, and ends the session with aggregated feedback.</p>
+        <div class="tech">
+          <span class="badge sky">POST /turns</span>
+          <span class="badge sky">POST /next-question</span>
+          <span class="badge sky">POST /end</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon sky">👤</div>
+          <h3>Users Router</h3>
+        </div>
+        <p>Resume upload, retrieval, and document text extraction for job description parsing.</p>
+        <div class="tech">
+          <span class="badge sky">POST /resume</span>
+          <span class="badge sky">GET /resume</span>
+          <span class="badge sky">POST /extract-text</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓ <span style="font-size:0.72rem;color:var(--slate-400);margin-left:0.5rem">BackgroundTasks · async/await</span></div>
+
+  <!-- ── Layer 3: Services ── -->
+  <div class="layer">
+    <div class="layer-label">Service Layer</div>
+    <div class="cards cols-4">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon emerald">🎧</div>
+          <h3>Whisper</h3>
+        </div>
+        <p>Transcribes audio with word-level timestamps. Runs as a background task per turn.</p>
+        <div class="tech">
+          <span class="badge emerald">whisper-1</span>
+          <span class="badge slate">verbose_json</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon violet">📊</div>
+          <h3>Speech Analytics</h3>
+        </div>
+        <p>Detects filler words via regex, counts pauses &gt; 1.5 s from Whisper word gaps, calculates WPM.</p>
+        <div class="tech">
+          <span class="badge slate">analytics.py</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon rose">👁️</div>
+          <h3>CV Pipeline</h3>
+        </div>
+        <p>Samples 1 frame per 100 ms. Haar cascade for face/eye detection. Gaze classified by iris offset. Outputs confidence score 0–100.</p>
+        <div class="tech">
+          <span class="badge rose">OpenCV</span>
+          <span class="badge slate">cv/analyzer.py</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon amber">🤖</div>
+          <h3>Gemini</h3>
+        </div>
+        <p>Generates contextual follow-up questions and structured feedback with 5–6 dimension scores.</p>
+        <div class="tech">
+          <span class="badge amber">gemini-2.5-flash</span>
+          <span class="badge slate">feedback.py</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-down">↓ <span style="font-size:0.72rem;color:var(--slate-400);margin-left:0.5rem">asyncpg · SQLAlchemy 2.0 · single commit at session end</span></div>
+
+  <!-- ── Layer 4: State & Storage ── -->
+  <div class="layer">
+    <div class="layer-label">State &amp; Storage</div>
+    <div class="cards cols-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon slate">⚙️</div>
+          <h3>In-Memory Session Store</h3>
+        </div>
+        <p>Module-level dict in <code>app/store/session_store.py</code>. Holds active sessions during an interview. 2-hour TTL; 5-minute background cleanup sweep. Lost on server restart by design — keeping in-flight state out of the database avoids partial writes.</p>
+        <div class="tech">
+          <span class="badge slate">dict (Python)</span>
+          <span class="badge slate">2-hour TTL</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon sky">🗄️</div>
+          <h3>Cloud SQL (PostgreSQL)</h3>
+        </div>
+        <p>Stores completed sessions only. Five tables: <code>sessions</code>, <code>turns</code>, <code>feedback</code>, <code>cv_analyses</code>, <code>user_resumes</code>. Written in a single atomic commit via <code>persist_completed_session</code>.</p>
+        <div class="tech">
+          <span class="badge sky">PostgreSQL</span>
+          <span class="badge sky">asyncpg</span>
+          <span class="badge slate">SQLAlchemy 2.0</span>
+          <span class="badge slate">Alembic</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Legend ── -->
+  <div class="legend">
+    <h2>Data Flows</h2>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#8b5cf6"></div>
+        Browser ↔ API: JSON + multipart
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#10b981"></div>
+        Audio bytes → Whisper (OpenAI API)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f43f5e"></div>
+        Video frames → OpenCV (local)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#f59e0b"></div>
+        Prompt → Gemini (Google AI API)
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#0ea5e9"></div>
+        Completed session → Cloud SQL
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#94a3b8"></div>
+        Active session ↔ In-memory store
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>MockStar · System Architecture · UC Berkeley iSchool Capstone 2026</footer>
+
+</body>
+</html>

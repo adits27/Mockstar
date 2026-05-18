@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MockStar — API Reference</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet-700: #6d28d9;
+      --violet-600: #7c3aed;
+      --violet-500: #8b5cf6;
+      --violet-400: #a78bfa;
+      --violet-200: #ddd6fe;
+      --violet-100: #ede9fe;
+      --violet-50:  #f5f3ff;
+      --slate-900:  #0f172a;
+      --slate-800:  #1e293b;
+      --slate-700:  #334155;
+      --slate-500:  #64748b;
+      --slate-400:  #94a3b8;
+      --slate-300:  #cbd5e1;
+      --slate-200:  #e2e8f0;
+      --slate-100:  #f1f5f9;
+      --slate-50:   #f8fafc;
+      --get:        #0ea5e9;
+      --get-bg:     #e0f2fe;
+      --post:       #10b981;
+      --post-bg:    #d1fae5;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--violet-500) 100%);
+      color: white;
+      padding: 2.5rem 3rem;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; opacity: 0.85; font-size: 0.95rem; }
+    header .base-url {
+      margin-top: 1.25rem;
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 160px);
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      background: white;
+      border-right: 1px solid var(--slate-200);
+      padding: 2rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    nav h2 {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--slate-400);
+      margin-bottom: 0.5rem;
+      margin-top: 1.25rem;
+    }
+    nav h2:first-child { margin-top: 0; }
+    nav a {
+      display: block;
+      text-decoration: none;
+      color: var(--slate-600);
+      font-size: 0.82rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 6px;
+      margin-bottom: 0.1rem;
+    }
+    nav a:hover { background: var(--violet-50); color: var(--violet-700); }
+
+    /* ── Content ── */
+    main {
+      padding: 3rem 2.5rem;
+      max-width: 820px;
+    }
+
+    /* ── Router section ── */
+    .router-section { margin-bottom: 4rem; }
+    .router-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--violet-200);
+    }
+    .router-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+    .router-header .prefix {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8rem;
+      background: var(--violet-100);
+      color: var(--violet-700);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    /* ── Endpoint card ── */
+    .endpoint {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--slate-100);
+      background: var(--slate-50);
+    }
+    .method {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+    .method.get  { background: var(--get-bg);  color: var(--get); }
+    .method.post { background: var(--post-bg); color: var(--post); }
+    .path {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.88rem;
+      color: var(--slate-700);
+      font-weight: 500;
+    }
+    .path .param { color: var(--violet-600); }
+    .endpoint-desc {
+      font-size: 0.82rem;
+      color: var(--slate-400);
+      margin-left: auto;
+    }
+    .endpoint-body {
+      padding: 1.25rem;
+    }
+
+    /* ── Param / field tables ── */
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--slate-400);
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .section-label:first-child { margin-top: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-bottom: 0.5rem;
+    }
+    thead th {
+      text-align: left;
+      font-weight: 600;
+      color: var(--slate-500);
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--slate-200);
+      background: var(--slate-50);
+    }
+    tbody td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+      color: var(--slate-700);
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8em;
+      background: var(--slate-100);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      color: var(--violet-700);
+    }
+    .opt { color: var(--slate-400); font-size: 0.75rem; }
+    .note {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--violet-50);
+      border-left: 3px solid var(--violet-400);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.8rem;
+      color: var(--slate-600);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--slate-400);
+      border-top: 1px solid var(--slate-200);
+    }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">API Reference</div>
+  <h1>MockStar REST API</h1>
+  <p>FastAPI backend — all endpoints return JSON. Active sessions are held in-memory; completed sessions are read from Cloud SQL.</p>
+  <div class="base-url">Base URL: http://localhost:8000</div>
+</header>
+
+<div class="layout">
+  <nav>
+    <h2>Sessions</h2>
+    <a href="#create-session">POST /sessions</a>
+    <a href="#list-sessions">GET /sessions</a>
+    <a href="#get-session">GET /sessions/{id}</a>
+    <h2>Turns</h2>
+    <a href="#post-turn">POST /turns</a>
+    <a href="#next-question">POST /next-question</a>
+    <a href="#end-session">POST /end</a>
+    <h2>Users</h2>
+    <a href="#upload-resume">POST /resume</a>
+    <a href="#get-resume">GET /resume</a>
+    <a href="#extract-text">POST /extract-text</a>
+  </nav>
+
+  <main>
+
+    <!-- ── Sessions ── -->
+    <div class="router-section">
+      <div class="router-header">
+        <h2>Sessions</h2>
+        <span class="prefix">/sessions</span>
+      </div>
+
+      <!-- Create Session -->
+      <div class="endpoint" id="create-session">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/sessions</span>
+          <span class="endpoint-desc">Create a new interview session</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Request Body (JSON)</div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>user_id</code></td><td>string</td><td>—</td><td>Google OAuth <code>sub</code> claim</td></tr>
+              <tr><td><code>job_role</code></td><td>string</td><td><code>"not specified"</code></td><td>Target job title</td></tr>
+              <tr><td><code>interview_type</code></td><td>string</td><td><code>"general"</code></td><td>behavioral · technical · case study · general</td></tr>
+              <tr><td><code>company_name</code></td><td>string</td><td><code>""</code></td><td>Optional company context</td></tr>
+              <tr><td><code>job_description</code></td><td>string <span class="opt">optional</span></td><td><code>null</code></td><td>Plain text JD for relevance scoring</td></tr>
+              <tr><td><code>resume_text</code></td><td>string <span class="opt">optional</span></td><td><code>null</code></td><td>Pre-fetched resume text</td></tr>
+              <tr><td><code>num_questions</code></td><td>integer</td><td><code>5</code></td><td>Number of turns (3, 5, or 7)</td></tr>
+              <tr><td><code>user_profile</code></td><td>object</td><td><code>{}</code></td><td>See UserProfile schema below</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">UserProfile fields</div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th><th>Default</th></tr></thead>
+            <tbody>
+              <tr><td><code>experience_level</code></td><td>string</td><td><code>"not specified"</code></td></tr>
+              <tr><td><code>communication_challenges</code></td><td>string[]</td><td><code>[]</code></td></tr>
+              <tr><td><code>goals</code></td><td>string</td><td><code>"general improvement"</code></td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>201</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>session_id</code></td><td>string (UUID)</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Session is created in the in-memory store only. It is not persisted to the database until <code>POST /sessions/{id}/end</code> is called.</div>
+        </div>
+      </div>
+
+      <!-- List Sessions -->
+      <div class="endpoint" id="list-sessions">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/sessions</span>
+          <span class="endpoint-desc">List completed sessions for a user</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Query Parameters</div>
+          <table>
+            <thead><tr><th>Param</th><th>Type</th><th>Required</th></tr></thead>
+            <tbody>
+              <tr><td><code>user_id</code></td><td>string</td><td>Yes</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>200</code> — array of SessionSummary</div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>session_id</code></td><td>string (UUID)</td></tr>
+              <tr><td><code>job_role</code></td><td>string</td></tr>
+              <tr><td><code>interview_type</code></td><td>string</td></tr>
+              <tr><td><code>created_at</code></td><td>string (ISO 8601)</td></tr>
+              <tr><td><code>completed_at</code></td><td>string (ISO 8601)</td></tr>
+              <tr><td><code>overall_score</code></td><td>float <span class="opt">nullable</span></td></tr>
+            </tbody>
+          </table>
+          <div class="note">Reads from Cloud SQL only — returns completed sessions, not in-flight ones.</div>
+        </div>
+      </div>
+
+      <!-- Get Session -->
+      <div class="endpoint" id="get-session">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/sessions/<span class="param">{session_id}</span></span>
+          <span class="endpoint-desc">Full session detail with scores</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Path Parameters</div>
+          <table>
+            <thead><tr><th>Param</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>session_id</code></td><td>string (UUID)</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>session_id</code></td><td>string</td></tr>
+              <tr><td><code>job_role</code></td><td>string</td></tr>
+              <tr><td><code>interview_type</code></td><td>string</td></tr>
+              <tr><td><code>user_profile</code></td><td>object</td></tr>
+              <tr><td><code>turns</code></td><td>TurnSummary[]</td></tr>
+              <tr><td><code>feedback</code></td><td>string (markdown) <span class="opt">nullable</span></td></tr>
+              <tr><td><code>scores</code></td><td>ScoreBreakdown <span class="opt">nullable</span></td></tr>
+              <tr><td><code>confidence_score</code></td><td>float <span class="opt">nullable</span></td></tr>
+              <tr><td><code>confidence_label</code></td><td>string <span class="opt">nullable</span></td></tr>
+              <tr><td><code>observations</code></td><td>string[] <span class="opt">nullable</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Turns ── -->
+    <div class="router-section">
+      <div class="router-header">
+        <h2>Turns</h2>
+        <span class="prefix">/sessions/{id}</span>
+      </div>
+
+      <!-- Post Turn -->
+      <div class="endpoint" id="post-turn">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/sessions/<span class="param">{session_id}</span>/turns</span>
+          <span class="endpoint-desc">Submit an answer (audio + video)</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Request — <code>multipart/form-data</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead>
+            <tbody>
+              <tr><td><code>audio</code></td><td>file (audio/webm)</td><td>Yes</td></tr>
+              <tr><td><code>question_text</code></td><td>string (form field)</td><td>Yes</td></tr>
+              <tr><td><code>video</code></td><td>file (video/webm)</td><td>No</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>turn_id</code></td><td>string (UUID)</td></tr>
+              <tr><td><code>transcript</code></td><td>string (empty — populated async)</td></tr>
+            </tbody>
+          </table>
+          <div class="note"><strong>Non-blocking.</strong> Response is immediate. Transcription (Whisper) and CV analysis (OpenCV) run as background tasks and update the in-memory session store. Audio and video bytes are never persisted to disk or database.</div>
+        </div>
+      </div>
+
+      <!-- Next Question -->
+      <div class="endpoint" id="next-question">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/sessions/<span class="param">{session_id}</span>/next-question</span>
+          <span class="endpoint-desc">Generate a contextual follow-up question</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>question</code></td><td>string</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Gemini 2.5 Flash receives the full conversation history to generate a contextually relevant follow-up. No request body required.</div>
+        </div>
+      </div>
+
+      <!-- End Session -->
+      <div class="endpoint" id="end-session">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/sessions/<span class="param">{session_id}</span>/end</span>
+          <span class="endpoint-desc">Finalise interview and generate feedback</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Response <code>200</code> — FeedbackResponse</div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>feedback</code></td><td>string (markdown)</td></tr>
+              <tr><td><code>scores.answer_relevance</code></td><td>integer (1–10)</td></tr>
+              <tr><td><code>scores.experience_articulation</code></td><td>integer (1–10)</td></tr>
+              <tr><td><code>scores.industry_fit</code></td><td>integer (1–10)</td></tr>
+              <tr><td><code>scores.clarity_and_structure</code></td><td>integer (1–10)</td></tr>
+              <tr><td><code>scores.filler_word_usage</code></td><td>integer (1–10)</td></tr>
+              <tr><td><code>scores.eye_contact_and_presence</code></td><td>integer (1–10) <span class="opt">nullable</span></td></tr>
+              <tr><td><code>scores.overall</code></td><td>float</td></tr>
+              <tr><td><code>confidence_score</code></td><td>float (0–100) <span class="opt">nullable</span></td></tr>
+              <tr><td><code>confidence_label</code></td><td>string (High/Medium/Low) <span class="opt">nullable</span></td></tr>
+              <tr><td><code>observations</code></td><td>string[] <span class="opt">nullable</span></td></tr>
+            </tbody>
+          </table>
+          <div class="note">Waits up to 30 s for pending background tasks to complete, then aggregates CV results, calls Gemini, and writes the full session to Cloud SQL in a single commit. Deletes the session from the in-memory store.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Users ── -->
+    <div class="router-section">
+      <div class="router-header">
+        <h2>Users</h2>
+        <span class="prefix">/users/{user_id}</span>
+      </div>
+
+      <!-- Upload Resume -->
+      <div class="endpoint" id="upload-resume">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/users/<span class="param">{user_id}</span>/resume</span>
+          <span class="endpoint-desc">Upload or replace resume (PDF / DOCX)</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Request — <code>multipart/form-data</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>file</code></td><td>file (PDF or DOCX)</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>message</code></td><td><code>"ok"</code></td></tr>
+              <tr><td><code>char_count</code></td><td>integer</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Upserts to <code>user_resumes</code> — one resume per user. Replaces any existing resume on re-upload.</div>
+        </div>
+      </div>
+
+      <!-- Get Resume -->
+      <div class="endpoint" id="get-resume">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="path">/users/<span class="param">{user_id}</span>/resume</span>
+          <span class="endpoint-desc">Retrieve stored resume text</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>resume_text</code></td><td>string</td></tr>
+              <tr><td><code>filename</code></td><td>string <span class="opt">nullable</span></td></tr>
+              <tr><td><code>uploaded_at</code></td><td>string (ISO 8601)</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Returns <code>404</code> if no resume is on file. Used by the dashboard to gate access to onboarding.</div>
+        </div>
+      </div>
+
+      <!-- Extract Text -->
+      <div class="endpoint" id="extract-text">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="path">/users/<span class="param">{user_id}</span>/extract-text</span>
+          <span class="endpoint-desc">Extract plain text from a PDF or DOCX (ephemeral)</span>
+        </div>
+        <div class="endpoint-body">
+          <div class="section-label">Request — <code>multipart/form-data</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>file</code></td><td>file (PDF or DOCX)</td></tr>
+            </tbody>
+          </table>
+          <div class="section-label">Response <code>200</code></div>
+          <table>
+            <thead><tr><th>Field</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td><code>text</code></td><td>string (extracted plain text)</td></tr>
+            </tbody>
+          </table>
+          <div class="note">Used for job description uploads. The extracted text is returned to the client only — nothing is stored in the database. The <code>user_id</code> path param is for route consistency and is not used for authorisation.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>MockStar · API Reference · UC Berkeley iSchool Capstone 2026</footer>
+
+</body>
+</html>

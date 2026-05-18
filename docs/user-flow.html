@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MockStar — User Flow Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#ede9fe',
+        primaryTextColor: '#1e293b',
+        primaryBorderColor: '#a78bfa',
+        lineColor: '#8b5cf6',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#f8fafc',
+        edgeLabelBackground: '#ffffff',
+        clusterBkg: '#f5f3ff',
+        clusterBorder: '#ddd6fe',
+      },
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 20,
+      }
+    });
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet-700: #6d28d9;
+      --violet-500: #8b5cf6;
+      --violet-200: #ddd6fe;
+      --slate-800:  #1e293b;
+      --slate-700:  #334155;
+      --slate-500:  #64748b;
+      --slate-200:  #e2e8f0;
+      --slate-100:  #f1f5f9;
+      --slate-50:   #f8fafc;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+      color: white;
+      padding: 2.5rem 3rem;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; opacity: 0.85; font-size: 0.95rem; max-width: 600px; }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    .diagram-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 2.5rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-bottom: 1rem;
+      margin-top: 2.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--violet-200);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    thead th {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-700);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { font-weight: 600; color: var(--slate-800); white-space: nowrap; }
+    code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8em;
+      background: var(--slate-100);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      color: #6d28d9;
+    }
+
+    .guards {
+      margin-top: 1.5rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .guards h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: 0.75rem;
+    }
+    .guards ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .guards ul li {
+      font-size: 0.84rem;
+      color: var(--slate-600);
+      display: flex;
+      gap: 0.5rem;
+    }
+    .guards ul li::before {
+      content: "·";
+      color: #a78bfa;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--slate-500);
+      border-top: 1px solid var(--slate-200);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">User Flow Diagram</div>
+  <h1>MockStar</h1>
+  <p>Complete user journey from landing page through authentication, onboarding, interview, and results.</p>
+</header>
+
+<main>
+
+  <div class="diagram-card">
+    <div class="mermaid">
+flowchart TD
+    A([Landing Page]) --> B{Signed in?}
+
+    B -- No --> C[Sign in with Google OAuth]
+    C --> D{Resume on file?}
+    B -- Yes --> D
+
+    D -- No --> E[Onboarding\nStep 1: Profile\nStep 2: Resume upload]
+    E --> F
+
+    D -- Yes --> F([Dashboard\nAll completed sessions])
+
+    F --> G[New Interview Setup\nRole · Company · Type · Questions · JD]
+    G --> H[POST /sessions\nCreate session]
+    H --> I[Active Interview\nLoad first question via Gemini]
+
+    I --> J[Record answer\naudio + video]
+    J --> K[POST /sessions/id/turns\nUpload audio + video]
+    K --> L[Background tasks\nWhisper · Analytics · OpenCV]
+    L --> M{Last question?}
+
+    M -- No --> N[POST /next-question\nGemini follow-up]
+    N --> J
+
+    M -- Yes --> O[POST /sessions/id/end\nAggregate · Feedback · Persist]
+    O --> P([Feedback Page\nScores · Insights · Breakdown])
+
+    P --> F
+    F --> Q([View past session])
+    </div>
+  </div>
+
+  <div class="section-title">Phase Summary</div>
+
+  <table>
+    <thead>
+      <tr><th>Phase</th><th>Route</th><th>Key Events</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Discovery</td>
+        <td><code>/</code></td>
+        <td>Features, FAQ, sign-in CTA</td>
+      </tr>
+      <tr>
+        <td>Authentication</td>
+        <td>Google OAuth</td>
+        <td><code>sub</code> claim stored as <code>user_id</code> in JWT</td>
+      </tr>
+      <tr>
+        <td>Onboarding</td>
+        <td><code>/onboarding</code></td>
+        <td>Profile captured; resume uploaded and stored in <code>user_resumes</code></td>
+      </tr>
+      <tr>
+        <td>Interview Setup</td>
+        <td><code>/interview/new</code></td>
+        <td>Session parameters collected; <code>POST /sessions</code> creates in-memory session</td>
+      </tr>
+      <tr>
+        <td>Active Interview</td>
+        <td><code>/interview/[sessionId]</code></td>
+        <td><code>loading → ready → recording → processing → answered</code> (loops per question) → <code>ending → done</code></td>
+      </tr>
+      <tr>
+        <td>Results</td>
+        <td><code>/sessions/[sessionId]/feedback</code></td>
+        <td>Scores, AI feedback report, per-turn breakdown</td>
+      </tr>
+      <tr>
+        <td>History</td>
+        <td><code>/dashboard</code></td>
+        <td>All completed sessions listed as cards</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="guards">
+    <h3>Route Guards</h3>
+    <ul>
+      <li>Unauthenticated users are redirected to <code>/</code> from any protected route via <code>frontend/src/proxy.ts</code>.</li>
+      <li>Authenticated users without a resume on file are redirected to <code>/onboarding</code> from <code>/dashboard</code>.</li>
+      <li>Raw audio and video are never persisted — processed in-memory and discarded after each turn.</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>MockStar · User Flow Diagram · UC Berkeley iSchool Capstone 2026</footer>
+
+</body>
+</html>

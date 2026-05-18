@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MockStar — Data Flow Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#ede9fe',
+        primaryTextColor: '#1e293b',
+        primaryBorderColor: '#a78bfa',
+        lineColor: '#8b5cf6',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#f8fafc',
+        noteBkgColor: '#f5f3ff',
+        noteTextColor: '#334155',
+        noteBorderColor: '#ddd6fe',
+        activationBorderColor: '#7c3aed',
+        activationBkgColor: '#ede9fe',
+        signalColor: '#334155',
+        signalTextColor: '#334155',
+      },
+      sequence: {
+        diagramMarginX: 40,
+        diagramMarginY: 20,
+        actorMargin: 60,
+        width: 150,
+        height: 45,
+        messageMargin: 35,
+        mirrorActors: false,
+        useMaxWidth: true,
+      }
+    });
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet-700: #6d28d9;
+      --violet-500: #8b5cf6;
+      --violet-200: #ddd6fe;
+      --violet-50:  #f5f3ff;
+      --slate-800:  #1e293b;
+      --slate-700:  #334155;
+      --slate-500:  #64748b;
+      --slate-200:  #e2e8f0;
+      --slate-100:  #f1f5f9;
+      --slate-50:   #f8fafc;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+      color: white;
+      padding: 2.5rem 3rem;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; opacity: 0.85; font-size: 0.95rem; max-width: 620px; }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    .diagram-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 2.5rem 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-bottom: 1rem;
+      margin-top: 2.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--violet-200);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    thead th {
+      text-align: left;
+      padding: 0.65rem 1rem;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-700);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody td:first-child { font-weight: 600; color: var(--slate-800); white-space: nowrap; }
+    code {
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.8em;
+      background: var(--slate-100);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      color: #6d28d9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--slate-500);
+      border-top: 1px solid var(--slate-200);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Data Flow Diagram</div>
+  <h1>MockStar</h1>
+  <p>Per-turn data flow through the backend during an active interview session — from audio and video capture through to Cloud SQL persistence.</p>
+</header>
+
+<main>
+
+  <div class="diagram-card">
+    <div class="mermaid">
+sequenceDiagram
+    participant B as Browser
+    participant F as FastAPI
+    participant S as Session Store
+    participant W as Whisper
+    participant CV as CV Pipeline
+    participant G as Gemini
+    participant DB as Cloud SQL
+
+    Note over B,DB: Session Creation
+    B->>F: POST /sessions
+    F->>S: Create session entry
+    F-->>B: session_id
+
+    Note over B,DB: Per Turn (repeats for each question)
+    B->>F: POST /sessions/id/next-question
+    F->>G: Conversation history
+    G-->>F: question text
+    F-->>B: question text
+
+    B->>B: User records audio + video via MediaRecorder
+
+    B->>F: POST /sessions/id/turns
+    F->>S: Add turn stub
+    F-->>B: turn_id — immediate, non-blocking
+
+    F-->>W: Background — Transcribe audio via whisper-1
+    W-->>F: transcript + word-level timestamps
+    F->>S: Update — transcript, filler_words, pause_count, wpm
+
+    F-->>CV: Background — Sample video frames at 1 per 100ms
+    CV-->>F: Per-frame gaze direction
+    CV-->>F: CVMetrics — gaze_on_camera_pct, gaze_away_events
+    F->>S: Update — confidence_score, confidence_label, observations
+
+    Note over B,DB: Session End
+    B->>F: POST /sessions/id/end
+    F->>S: Poll until background tasks complete — max 30s
+    F->>S: Aggregate CV scores across all turns
+    F->>G: Prompt with turns, filler counts, pauses, CV summary
+    G-->>F: Score breakdown — dimensions and overall
+    G-->>F: Feedback markdown report
+    F->>DB: Persist — sessions, turns, feedback, cv_analyses
+    F->>S: Delete session from store
+    F-->>B: FeedbackResponse — scores, feedback, confidence_score
+    </div>
+  </div>
+
+  <div class="section-title">Key Properties</div>
+
+  <table>
+    <thead>
+      <tr><th>Property</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Turn response latency</td>
+        <td>Immediate — transcription and CV run as <code>BackgroundTask</code>s; the HTTP response is not blocked</td>
+      </tr>
+      <tr>
+        <td>Max wait at session end</td>
+        <td>30 seconds — <code>POST /end</code> polls the store until all pending tasks complete before calling Gemini</td>
+      </tr>
+      <tr>
+        <td>Audio persistence</td>
+        <td>Never stored — raw bytes are processed in-memory and discarded after Whisper returns</td>
+      </tr>
+      <tr>
+        <td>Video persistence</td>
+        <td>Written to a temp file, processed frame-by-frame, then deleted via <code>os.unlink</code></td>
+      </tr>
+      <tr>
+        <td>Session durability</td>
+        <td>In-memory only during the interview; lost on server restart. 2-hour inactivity TTL with a 5-minute cleanup sweep</td>
+      </tr>
+      <tr>
+        <td>DB write strategy</td>
+        <td>Single atomic commit at session end — all tables written together or not at all</td>
+      </tr>
+      <tr>
+        <td>Gemini retries</td>
+        <td>Up to 3 attempts if JSON parsing of the response fails; raises <code>RuntimeError</code> after the third failure</td>
+      </tr>
+    </tbody>
+  </table>
+
+</main>
+
+<footer>MockStar · Data Flow Diagram · UC Berkeley iSchool Capstone 2026</footer>
+
+</body>
+</html>

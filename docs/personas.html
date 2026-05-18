@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MockStar — User Personas</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet-700: #6d28d9;
+      --violet-600: #7c3aed;
+      --violet-500: #8b5cf6;
+      --violet-400: #a78bfa;
+      --violet-200: #ddd6fe;
+      --violet-100: #ede9fe;
+      --violet-50:  #f5f3ff;
+      --slate-900:  #0f172a;
+      --slate-800:  #1e293b;
+      --slate-700:  #334155;
+      --slate-500:  #64748b;
+      --slate-400:  #94a3b8;
+      --slate-300:  #cbd5e1;
+      --slate-200:  #e2e8f0;
+      --slate-100:  #f1f5f9;
+      --slate-50:   #f8fafc;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--violet-700) 0%, var(--violet-500) 100%);
+      color: white;
+      padding: 2.5rem 3rem;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; }
+    header p  { margin-top: 0.5rem; opacity: 0.85; font-size: 0.95rem; max-width: 560px; }
+
+    /* ── Main ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* ── Grid ── */
+    .personas-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* ── Persona Card ── */
+    .persona {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .persona-hero {
+      padding: 1.75rem 1.75rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .persona-meta h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+    .persona-meta .role {
+      font-size: 0.8rem;
+      color: var(--slate-500);
+      margin-top: 0.15rem;
+    }
+    .persona-meta .demographic {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .chip {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    .persona-body {
+      padding: 0 1.75rem 1.75rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--slate-100);
+      margin-bottom: 1.25rem;
+    }
+
+    .section {
+      margin-bottom: 1.1rem;
+    }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--slate-400);
+      margin-bottom: 0.5rem;
+    }
+
+    .section ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .section ul li {
+      font-size: 0.83rem;
+      color: var(--slate-600);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .section ul li::before {
+      content: "·";
+      color: var(--violet-400);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.02em;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .feature-tag {
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+      background: var(--violet-50);
+      color: var(--violet-700);
+      border: 1px solid var(--violet-200);
+    }
+
+    .quote-block {
+      margin-top: 0;
+      padding: 0.75rem 1rem;
+      background: var(--slate-50);
+      border-left: 3px solid var(--violet-400);
+      border-radius: 0 10px 10px 0;
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--slate-500);
+      line-height: 1.5;
+    }
+
+    /* Colour themes per persona */
+    .theme-a .avatar { background: #ede9fe; }
+    .theme-a .chip   { background: #ede9fe; color: #6d28d9; }
+
+    .theme-b .avatar { background: #d1fae5; }
+    .theme-b .chip   { background: #d1fae5; color: #065f46; }
+
+    .theme-c .avatar { background: #e0f2fe; }
+    .theme-c .chip   { background: #e0f2fe; color: #0369a1; }
+
+    .theme-d .avatar { background: #fef3c7; }
+    .theme-d .chip   { background: #fef3c7; color: #92400e; }
+
+    /* ── Onboarding mapping ── */
+    .mapping-section {
+      margin-top: 3rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .mapping-section h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-800);
+    }
+    .mapping-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .mapping-table thead th {
+      text-align: left;
+      padding: 0.6rem 1rem;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+      color: var(--slate-500);
+      font-weight: 600;
+    }
+    .mapping-table tbody td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+      color: var(--slate-700);
+    }
+    .mapping-table tbody tr:last-child td { border-bottom: none; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.78rem;
+      color: var(--slate-400);
+      border-top: 1px solid var(--slate-200);
+    }
+
+    @media (max-width: 720px) {
+      .personas-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">User Personas</div>
+  <h1>Who Uses MockStar</h1>
+  <p>Four primary user archetypes identified through the onboarding schema — each mapped to the platform features that serve them most.</p>
+</header>
+
+<main>
+
+  <div class="personas-grid">
+
+    <!-- ── Persona A ── -->
+    <div class="persona theme-a">
+      <div class="persona-hero">
+        <div class="avatar">🎓</div>
+        <div class="persona-meta">
+          <h2>The New Grad</h2>
+          <div class="role">Recent university graduate · First-time job seeker</div>
+          <div class="demographic">
+            <span class="chip">Entry level</span>
+            <span class="chip">0–1 years experience</span>
+            <span class="chip">High anxiety</span>
+          </div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="divider"></div>
+        <div class="section">
+          <div class="section-label">Pain Points</div>
+          <ul>
+            <li>No professional interview experience to draw on</li>
+            <li>Nervousness causes filler words and gaze avoidance</li>
+            <li>Unsure how to structure answers (STAR method, etc.)</li>
+            <li>Limited real-world examples to reference</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">Goals</div>
+          <ul>
+            <li>Build confidence through repeated, low-stakes practice</li>
+            <li>Get concrete feedback on delivery and structure</li>
+            <li>Learn which filler words to eliminate</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">MockStar Features They Value Most</div>
+          <div class="features">
+            <span class="feature-tag">Filler word detection</span>
+            <span class="feature-tag">Eye contact scoring</span>
+            <span class="feature-tag">Clarity &amp; structure dimension</span>
+            <span class="feature-tag">Repeat sessions / history</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-label">Characteristic Quote</div>
+          <div class="quote-block">"I want to stop saying 'um' every five seconds and actually sound like I know what I'm doing."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Persona B ── -->
+    <div class="persona theme-b">
+      <div class="persona-hero">
+        <div class="avatar">🔄</div>
+        <div class="persona-meta">
+          <h2>The Career Switcher</h2>
+          <div class="role">Transitioning to a new industry or function</div>
+          <div class="demographic">
+            <span class="chip">Mid level</span>
+            <span class="chip">3–8 years experience</span>
+            <span class="chip">Domain gap</span>
+          </div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="divider"></div>
+        <div class="section">
+          <div class="section-label">Pain Points</div>
+          <ul>
+            <li>Strong experience but in a different domain — needs to reframe stories</li>
+            <li>Unfamiliar with terminology of the target industry</li>
+            <li>Worried about being penalised for lack of direct experience</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">Goals</div>
+          <ul>
+            <li>Practice translating past experience into relevant narratives</li>
+            <li>Identify and fill industry knowledge gaps</li>
+            <li>Upload job descriptions to get contextually tailored questions</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">MockStar Features They Value Most</div>
+          <div class="features">
+            <span class="feature-tag">Job description upload</span>
+            <span class="feature-tag">Industry fit scoring</span>
+            <span class="feature-tag">Experience articulation dimension</span>
+            <span class="feature-tag">Resume-grounded feedback</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-label">Characteristic Quote</div>
+          <div class="quote-block">"I've led three product launches — I just need to figure out how to talk about them in data science terms."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Persona C ── -->
+    <div class="persona theme-c">
+      <div class="persona-hero">
+        <div class="avatar">🌏</div>
+        <div class="persona-meta">
+          <h2>The Non-Native Speaker</h2>
+          <div class="role">International student or immigrant professional</div>
+          <div class="demographic">
+            <span class="chip">Any level</span>
+            <span class="chip">English as second language</span>
+            <span class="chip">Accent aware</span>
+          </div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="divider"></div>
+        <div class="section">
+          <div class="section-label">Pain Points</div>
+          <ul>
+            <li>Concerned that accent or slower pace will be penalised</li>
+            <li>May use filler phrases while searching for the right word</li>
+            <li>Cultural differences in interview expectations</li>
+            <li>Needs inclusive, constructive feedback — not judgement</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">Goals</div>
+          <ul>
+            <li>Practice in a safe, non-judgemental environment</li>
+            <li>Get feedback on content quality, not speaking speed</li>
+            <li>Build confidence before high-stakes interviews</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">MockStar Features They Value Most</div>
+          <div class="features">
+            <span class="feature-tag">Communication challenges flag</span>
+            <span class="feature-tag">WPM excluded from scoring</span>
+            <span class="feature-tag">Non-penalisation instruction in prompt</span>
+            <span class="feature-tag">Answer relevance focus</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-label">Characteristic Quote</div>
+          <div class="quote-block">"My answers are good — I just need to practise without worrying that my accent is hurting my score."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Persona D ── -->
+    <div class="persona theme-d">
+      <div class="persona-hero">
+        <div class="avatar">📈</div>
+        <div class="persona-meta">
+          <h2>The Senior Professional</h2>
+          <div class="role">Returning to market after a gap or targeting a step-up</div>
+          <div class="demographic">
+            <span class="chip">Senior level</span>
+            <span class="chip">8+ years experience</span>
+            <span class="chip">High standards</span>
+          </div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="divider"></div>
+        <div class="section">
+          <div class="section-label">Pain Points</div>
+          <ul>
+            <li>Hasn't interviewed in years — rusty on format and pacing</li>
+            <li>Tends to over-explain or go off-topic due to breadth of experience</li>
+            <li>Wants to target senior or leadership roles specifically</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">Goals</div>
+          <ul>
+            <li>Sharpen conciseness and structure across multiple mock runs</li>
+            <li>Get feedback calibrated to senior-level expectations</li>
+            <li>Track score improvement over multiple sessions</li>
+          </ul>
+        </div>
+        <div class="section">
+          <div class="section-label">MockStar Features They Value Most</div>
+          <div class="features">
+            <span class="feature-tag">Clarity &amp; structure scoring</span>
+            <span class="feature-tag">Session history dashboard</span>
+            <span class="feature-tag">Resume-grounded coaching</span>
+            <span class="feature-tag">Behavioural + case study modes</span>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-label">Characteristic Quote</div>
+          <div class="quote-block">"I know I ramble. I need something that shows me exactly where I lost the thread — and how often."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Onboarding Mapping ── -->
+  <div class="mapping-section">
+    <h2>Onboarding Field → Persona Mapping</h2>
+    <table class="mapping-table">
+      <thead>
+        <tr>
+          <th>Onboarding Field</th>
+          <th>New Grad</th>
+          <th>Career Switcher</th>
+          <th>Non-Native Speaker</th>
+          <th>Senior Pro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>experience_level</code></td>
+          <td>Entry level</td>
+          <td>Mid level</td>
+          <td>Any</td>
+          <td>Senior</td>
+        </tr>
+        <tr>
+          <td><code>communication_challenges</code></td>
+          <td>Nervousness, filler words</td>
+          <td>Domain vocabulary</td>
+          <td>Accent, stammer</td>
+          <td>Over-explaining</td>
+        </tr>
+        <tr>
+          <td><code>goals</code></td>
+          <td>Build confidence</td>
+          <td>Reframe experience for new industry</td>
+          <td>Practise in safe environment</td>
+          <td>Improve conciseness</td>
+        </tr>
+        <tr>
+          <td>Interview type preference</td>
+          <td>Behavioural / General</td>
+          <td>Behavioural / Case Study</td>
+          <td>Any</td>
+          <td>Behavioural / Technical</td>
+        </tr>
+        <tr>
+          <td>Resume upload importance</td>
+          <td>Low (limited history)</td>
+          <td>High (reframing stories)</td>
+          <td>Medium</td>
+          <td>High (evidence-based coaching)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>MockStar · User Personas · UC Berkeley iSchool Capstone 2026</footer>
+
+</body>
+</html>
